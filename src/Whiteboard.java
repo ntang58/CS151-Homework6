@@ -40,6 +40,7 @@ public class Whiteboard extends JFrame{
 		for(Component comp : wBox.getComponents()){
 			
 		}
+		System.out.println("Hello github");
 		whiteBoard.add(westControls, BorderLayout.WEST);
 		whiteBoard.pack();
 		whiteBoard.setVisible(true);
