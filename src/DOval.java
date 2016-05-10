@@ -1,35 +1,26 @@
 import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 
-
-public class DOval implements DShape{
-	DOvalModel ovalData = new DOvalModel();
-	
-	public void draw() {
-		this.draw(g);
+public class DOval extends DShape{
+	private DOvalModel ovalData = new DOvalModel();
+	public DOval(){
+		super.attachModel(ovalData);
 	}
-	private void draw(Graphics g){
-		
+	/**
+	 * attaches a model instead of a zero-value default constructor
+	 * @param d
+	 */
+	public DOval(DOvalModel d){
+		ovalData=d;
+		super.attachModel(ovalData);
 	}
-	@Override
-	public void setXY(Point p) {
-		ovalData.setXY(p);
-		
+	public void draw(){
+		Graphics g = new BufferedImage(ovalData.getWidth(), ovalData.getHeight(), BufferedImage.TYPE_INT_ARGB).getGraphics();
+		draw(g);
 	}
-	@Override
-	public void setRectangle(Rectangle r) {
-		ovalData.setBounds(r);
+	private void draw(Graphics g) {
+		g.drawOval(ovalData.getX(), ovalData.getY(), ovalData.getWidth(), ovalData.getHeight());
+		g.setColor(ovalData.getColor());
+		g.fillOval(ovalData.getX(), ovalData.getY(), ovalData.getWidth(), ovalData.getHeight());
 	}
-	@Override
-	public Rectangle getRectangle() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public Point getPoint() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 }

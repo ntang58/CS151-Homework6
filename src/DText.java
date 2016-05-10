@@ -1,10 +1,17 @@
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
-public class DText implements DShape{
-	DTextModel textData;
-
+public class DText extends DShape{
+	private DTextModel textData =new DTextModel();
+	public DText(){
+		super.attachModel(textData);
+	}
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
+		System.out.println("DText override");
+	}
+	private void draw(Graphics g){
 		
 	}
+	
 }

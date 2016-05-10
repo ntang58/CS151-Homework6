@@ -5,13 +5,13 @@ import java.awt.Rectangle;
  * stores a conceptual rectangular bound and color data of a DShape
  */
 public class DShapeModel {
-	private double x;
-	private double y;
-	private double height;
-	private double width;
+	private int x;
+	private int y;
+	private int height;
+	private int width;
 	private Color color;
 	/**
-	 * default contructor. Sets x,y coordinates to 0 and height and width to 0. Color is set to Gray
+	 * default constructor. Sets x,y coordinates to 0 and height and width to 0. Color is set to Gray
 	 */
 	public DShapeModel(){
 		x =0;
@@ -33,25 +33,25 @@ public class DShapeModel {
 	 * @param r the rectangle
 	 */
 	public void setBounds(Rectangle r){
-		this.x = r.getX();
-		this.y = r.getY();
-		this.height = r.getHeight();
-		this.width = r.getWidth();
+		this.x = (int)r.getX();
+		this.y = (int)r.getY();
+		this.height = (int)r.getHeight();
+		this.width = (int)r.getWidth();
 	}
 	public void setXY(int x, int y){
 		this.x = x;
 		this.y = y;
 	}
-	public void setX(double x){
+	public void setX(int x){
 		this.x = x;
 	}
-	public void setY(double y){
+	public void setY(int y){
 		this.y = y;
 	}
-	public void setHeight(double height){
+	public void setHeight(int height){
 		this.height = height;
 	}
-	public void setWidth(double width){
+	public void setWidth(int width){
 		this.width = width;
 	}
 	
@@ -59,16 +59,16 @@ public class DShapeModel {
 		this.color = color;
 	}
 	//getters----------------------
-	public double getHeight(){
+	public int getHeight(){
 		return height;
 	}
-	public double getWidth(){
+	public int getWidth(){
 		return width;
 	}
-	public double getX(){
+	public int getX(){
 		return x;
 	}
-	public double getY(){
+	public int getY(){
 		return y;
 	}
 	public Color getColor(){

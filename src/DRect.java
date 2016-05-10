@@ -1,35 +1,22 @@
 import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 
-
-public class DRect implements DShape{
-	DRectModel rectData = new DRectModel();
-	
-	public void draw() {
-		this.draw(g);
+public class DRect extends DShape{
+	private DRectModel rectData = new DRectModel();
+	public DRect(){
+		super.attachModel(rectData);
+	}
+	public DRect(DRectModel dr){
+		rectData = dr;
+		super.attachModel(rectData);
+	}
+	public void draw(){
+		Graphics g = new BufferedImage(rectData.getWidth(), rectData.getHeight(),BufferedImage.TYPE_INT_ARGB).getGraphics();
+		draw(g);
 	}
 	private void draw(Graphics g){
-		
-	}
-	@Override
-	public void setXY(Point p) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void setRectangle(Rectangle r) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public Rectangle getRectangle() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public Point getPoint() {
-		// TODO Auto-generated method stub
-		return null;
+		g.drawRect(rectData.getX(), rectData.getY(), rectData.getWidth(), rectData.getHeight());
+		g.setColor(rectData.getColor());
+		g.fillRect(rectData.getX(), rectData.getY(), rectData.getWidth(), rectData.getHeight());
 	}
 }

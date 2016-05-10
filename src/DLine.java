@@ -1,10 +1,16 @@
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
-public class DLine implements DShape{
-	DLineModel lineData;
-
+public class DLine extends DShape{
+	private DLineModel lineData =new DLineModel();;
+	public DLine(){
+		super.attachModel(lineData);
+	}
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
+		System.out.println("Draw line implementation");
+	}
+	private void draw(Graphics g){
 		
 	}
 }
