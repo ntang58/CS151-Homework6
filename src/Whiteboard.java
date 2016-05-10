@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -54,10 +55,10 @@ public class Whiteboard extends JFrame{
 		ovalCreate.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
-				int x = r.nextInt(100);
-				int y = r.nextInt(100);
-				int width = r.nextInt(100);
-				int height = r.nextInt(100);
+				int x = r.nextInt(400);
+				int y = r.nextInt(400);
+				int width = r.nextInt(400);
+				int height = r.nextInt(400);
 				DOvalModel newOval= new DOvalModel();
 				newOval.setBounds(new Rectangle(x,y,width,height));
 				c.addDShape(newOval);				

@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -24,8 +26,10 @@ public class Canvas extends JPanel{
 	 */
 	public void paintComponents(){
 		for(DShape ds : shapes){
-			System.out.println(ds.getClass().getName()+" "+ds);
-			ds.draw();
+			//System.out.println(ds.getClass().getName()+" "+ds);
+			Graphics g = this.getGraphics();
+			Graphics2D g2 = (Graphics2D) g;
+			ds.draw(g2);
 		}
 	}
 	/**

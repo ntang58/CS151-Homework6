@@ -1,6 +1,7 @@
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
-public class DShape{
+public abstract class DShape{
 	DShapeModel theModel = null;
 	public void attachModel(DShapeModel ds){
 		theModel = ds;
@@ -8,8 +9,7 @@ public class DShape{
 	/**
 	 * draws the specific DShape
 	 */
-	public void draw(){
-	}
+	abstract public void draw(Graphics g);
 	/**
 	 * sets the XY coordinate of the DShape
 	 * @param p
@@ -37,6 +37,6 @@ public class DShape{
 		return new Point(theModel.getX(), theModel.getY());
 	}
 	public String toString(){
-		return getRectangle().toString();
+		return getRectangle().toString() + theModel.getColor();
 	}
 }
