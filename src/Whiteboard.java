@@ -17,6 +17,8 @@ public class Whiteboard extends JFrame{
 	private static JFrame whiteBoard;
 	private static JPanel westControls;
 	private static Random r = new Random();
+	private static JFrame colorChooser = new JFrame("Select a Color");
+	
 	/**
 	 * @param controls- an array of components to add to the panel
 	 * @return constructs and returns a panel of controls for whiteboard
@@ -32,11 +34,13 @@ public class Whiteboard extends JFrame{
 	public static void main(String[] args){
 		whiteBoard = new JFrame("Whiteboard");
 		whiteBoard.setLayout(new BorderLayout());
+		whiteBoard.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		colorChooser.setLayout(new BorderLayout());
+		colorChooser.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		westControls = new JPanel();
 		westControls.setLayout(new BoxLayout(westControls, BoxLayout.Y_AXIS));
 		Canvas c = new Canvas();
 		whiteBoard.add(c, BorderLayout.CENTER);
-		JComponent[] ctrls = new JComponent[3];
 		JButton rectCreate = new JButton("Draw Rectangle");
 		rectCreate.addActionListener(new ActionListener() {
 			
@@ -50,6 +54,7 @@ public class Whiteboard extends JFrame{
 				c.addDShape(newRect);
 			}
 		});
+		JComponent[] ctrls = new JComponent[4];
 		ctrls[0] = rectCreate;
 		JButton ovalCreate = new JButton("Draw Oval");
 		ovalCreate.addActionListener(new ActionListener(){
@@ -76,6 +81,14 @@ public class Whiteboard extends JFrame{
 			
 		});
 		ctrls[2] = drawAll;
+		JButton setColor = new JButton("Set Color");
+		setColor.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		JPanel wBox = boxControls(ctrls);
 		westControls.add(wBox);
 		for(Component comp : wBox.getComponents()){
@@ -84,6 +97,5 @@ public class Whiteboard extends JFrame{
 		whiteBoard.add(westControls, BorderLayout.WEST);
 		whiteBoard.pack();
 		whiteBoard.setVisible(true);
-		whiteBoard.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 }

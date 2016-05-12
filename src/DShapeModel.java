@@ -1,10 +1,12 @@
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 /**
  * stores a conceptual rectangular bound and color data of a DShape
  */
 public class DShapeModel {
+	private ArrayList<ModelListener>mListeners;
 	private int x;
 	private int y;
 	private int height;
@@ -21,12 +23,31 @@ public class DShapeModel {
 		color = Color.GRAY;
 	}
 	/**
+	 * adds a model listener to this model to do something when this model gets changed
+	 * @param observer 
+	 */
+	public void addModelListener(ModelListener observer){
+		mListeners.add(observer);
+	}
+	public void removeListener(ModelListener tbRem){
+		mListeners.remove(tbRem);
+	}
+	/**
+	 * loops through notifier list and notifies each model with modelChanged(this model) whenever this model changes
+	 */
+	private void notifyListeners(){
+		for(ModelListener mL:mListeners){
+			 mL.modelChanged(this);
+		}
+	}
+	/**
 	 * sets coordinate position of this shape using a Point
 	 * @param p the point to use
 	 */
 	public void setXY(Point p){
 		this.x=(int) p.getX();
 		this.y=(int)p.getY();
+		notifyListeners();
 	}
 	/**
 	 * sets the bounds of DShape based on xy coordinates and height and width of a rectangle
@@ -37,26 +58,33 @@ public class DShapeModel {
 		this.y = (int)r.getY();
 		this.height = (int)r.getHeight();
 		this.width = (int)r.getWidth();
+		notifyListeners();
 	}
 	public void setXY(int x, int y){
 		this.x = x;
 		this.y = y;
+		notifyListeners();
 	}
 	public void setX(int x){
 		this.x = x;
+		notifyListeners();
 	}
 	public void setY(int y){
 		this.y = y;
+		notifyListeners();
 	}
 	public void setHeight(int height){
 		this.height = height;
+		notifyListeners();
 	}
 	public void setWidth(int width){
 		this.width = width;
+		notifyListeners();
 	}
 	
 	public void setColor(Color color){
 		this.color = color;
+		notifyListeners();
 	}
 	//getters----------------------
 	public int getHeight(){
