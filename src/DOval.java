@@ -13,11 +13,9 @@ public class DOval extends DShape{
 		ovalData=d;
 		super.attachModel(ovalData);
 	}
-	/*public void draw(){
-		Graphics g = new BufferedImage(ovalData.getWidth(), ovalData.getHeight(), BufferedImage.TYPE_INT_ARGB).getGraphics();
-		draw(g);
-	}*/
-	public void draw(Graphics g) {
+
+	public void draw(Graphics g, boolean selected) {
+		super.setSelected(selected);
 		g.drawOval(ovalData.getX(), ovalData.getY(), ovalData.getWidth(), ovalData.getHeight());
 		g.setColor(ovalData.getColor());
 		g.fillOval(ovalData.getX(), ovalData.getY(), ovalData.getWidth(), ovalData.getHeight());

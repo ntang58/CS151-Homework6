@@ -8,12 +8,9 @@ public class DRect extends DShape{
 		rectData = dr;
 		super.attachModel(rectData);
 	}
-	/*
-	public void draw(){
-		Graphics g = new BufferedImage(rectData.getWidth(), rectData.getHeight(),BufferedImage.TYPE_INT_ARGB).getGraphics();
-		draw(g);
-	}*/
-	public void draw(Graphics g){
+	
+	public void draw(Graphics g, boolean selected){
+		super.setSelected(selected);
 		g.drawRect(rectData.getX(), rectData.getY(), rectData.getWidth(), rectData.getHeight());
 		g.setColor(rectData.getColor());
 		g.fillRect(rectData.getX(), rectData.getY(), rectData.getWidth(), rectData.getHeight());
