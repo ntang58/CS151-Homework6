@@ -75,39 +75,13 @@ public class Canvas extends JPanel{
 	 */
 	public void paintComponents(){
 		for(DShape ds : shapes){
-			//System.out.println(ds.getClass().getName()+" "+ds);
 			Graphics g = this.getGraphics();
 			Graphics2D g2 = (Graphics2D) g;
 			ds.draw(g2, false);
 		}
-		//shapeSelected(shapes.get(shapes.size()-1));
+		
 	}
-	/*private void shapeSelected(DShape d){
-		for(DShape ds:shapes){		
-			if(ds.equals(d)){
-				selected= ds;
-				break;
-			}
-		}
-		if(previous==null){
-			previous= d;
-			pColor = d.getColor();
-			selected.setColor(Color.BLACK);
-			selected.draw((Graphics2D)this.getGraphics(),true);
-		}
-		else{
-			deSelectShape(previous);
-			
-		}
-	}
-	private void deSelectShape(DShape d){
-		for(DShape ds:shapes){
-			if(ds.equals(d)){
-				ds.setSelected(false);
-				break;
-			}
-		}
-	}*/
+	
 	/**
 	 * creates and add a shape based on the DShapeModel passed in
 	 * @param d the DShapeModel to add
