@@ -36,8 +36,10 @@ public class DShapeModel {
 	 * loops through notifier list and notifies each model with modelChanged(this model) whenever this model changes
 	 */
 	private void notifyListeners(){
-		for(ModelListener mL:mListeners){
-			 mL.modelChanged(this);
+		if(mListeners!=null){
+			for(ModelListener mL:mListeners){
+				 mL.modelChanged(this);
+			}
 		}
 	}
 	/**

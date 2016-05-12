@@ -25,10 +25,10 @@ public class Canvas extends JPanel{
 		super(new FlowLayout());
 		this.setPreferredSize(new Dimension(400, 400));
 		this.setBackground(Color.WHITE);
-		addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e){
-				//get x y part of mouse 
-				Point p = new Point(e.getX(), e.getY());
+		addMouseListener(new MouseAdapter(){
+			Point p = null;
+			public void mousePressed(MouseEvent e){//clicked
+				p = new Point(e.getX(), e.getY());
 				//System.out.println("Pointer at"+ p);
 				DShape check = isSelectedShape(p);
 				if(check!=null){
@@ -36,10 +36,48 @@ public class Canvas extends JPanel{
 					drawSelected();
 				}
 			}
+			public void mouseReleased(MouseEvent e){
+				if(selected!=null){
+					DShape tempSel = selected;
+					clearSelected();
+					selected=tempSel;
+					drawSelected();
+				}
+			}
 		});
+		addMouseMotionListener(new MouseAdapter() {
+			Point end=null;
+			public void mouseDragged(MouseEvent e){//drag object
+				end = e.getPoint();
+				if(selected!=null){
+					selected.setXY(end);
+				}
+			}
+		});
+
+	}
+	/**
+	 * for checking to see if a shape is selected or not on this canvas
+	 * @return true if a shape is selected, false if not
+	 */
+	public boolean isSelected(){
+		if(selected==null){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+	/**
+	 * changes the selected shape to this color
+	 * @param c color to change shape to 
+	 */
+	public void setSelectedColor(Color c){
+		prevColor = c;
+		selected.setColor(c);
+		selected.draw((Graphics2D)this.getGraphics(), false);
 	}
 	private DShape isSelectedShape(Point p){
-		int numberAt = 0;
 		DShape lastselectedOne = null;
 		for(DShape ds: shapes){
 			Rectangle check = ds.getRectangle();
@@ -52,19 +90,33 @@ public class Canvas extends JPanel{
 			
 		return lastselectedOne;
 	}
+	/**
+	 * draws the current selected shape as black
+	 */
 	private void drawSelected(){
-		if(prevSelected!=null){
-			drawPrev();
+		if(selected!=null){
+			if(prevSelected!=null){
+				drawPrev();
+			}
+			if(selected!=prevSelected){
+				prevColor = selected.getColor();
+			}
+			prevSelected = selected;
+			Graphics2D g = (Graphics2D)this.getGraphics();
+			selected.setColor(Color.BLACK);
+			selected.draw(g, true);
 		}
-		if(selected!=prevSelected){
-			prevColor = selected.getColor();
-		}
-		prevSelected = selected;
-		Graphics2D g = (Graphics2D)this.getGraphics();
-		selected.setColor(Color.BLACK);
-		selected.draw(g, true);
-		
 	}
+	/**
+	 * clears the selected component from the canvas
+	 */
+	private void clearSelected(){
+		selected.setColor(Color.WHITE);
+		selected.draw((Graphics2D)this.getGraphics(), false);
+	}
+	/**
+	 * When a selecting a new component, the previously selected component will redraw itself with this method
+	 */
 	private void drawPrev(){
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
 		prevSelected.setColor(prevColor);
@@ -79,7 +131,6 @@ public class Canvas extends JPanel{
 			Graphics2D g2 = (Graphics2D) g;
 			ds.draw(g2, false);
 		}
-		
 	}
 	
 	/**
@@ -100,14 +151,14 @@ public class Canvas extends JPanel{
 		if(d instanceof DTextModel){
 			thisD = new DText();
 		}
-		
 		thisD.setXY(new Point(d.getX(), d.getY()));
 		thisD.setRectangle(new Rectangle(d.getX(), d.getY(), d.getWidth(), d.getHeight()));
 		shapes.add(thisD);
-		System.out.println(shapes);
+		//System.out.println(shapes);
 	}
 	public void removeDShape(DShapeModel d ){
 		
 	}
-	
 }
+	
+

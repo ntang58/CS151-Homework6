@@ -5,7 +5,7 @@ import java.awt.Rectangle;
 public abstract class DShape{
 	private DShapeModel theModel = null;
 	private boolean selected;
-	public void attachModel(DShapeModel ds){
+	protected void attachModel(DShapeModel ds){
 		theModel = ds;
 	}
 	/**
