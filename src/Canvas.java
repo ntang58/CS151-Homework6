@@ -51,6 +51,7 @@ public class Canvas extends JPanel{
 				end = e.getPoint();
 				if(selected!=null){
 					selected.setXY(end);
+					drawSelected();
 				}
 			}
 		});
@@ -115,7 +116,7 @@ public class Canvas extends JPanel{
 		selected.draw((Graphics2D)this.getGraphics(), false);
 	}
 	/**
-	 * When a selecting a new component, the previously selected component will redraw itself with this method
+	 * Used when previously selected component needs to redraw itself
 	 */
 	private void drawPrev(){
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
