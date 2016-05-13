@@ -27,7 +27,7 @@ public class Canvas extends JPanel{
 		this.setBackground(Color.WHITE);
 		addMouseListener(new MouseAdapter(){
 			Point p = null;
-			public void mousePressed(MouseEvent e){//clicked
+			public void mouseClicked(MouseEvent e){
 				p = new Point(e.getX(), e.getY());
 				//System.out.println("Pointer at"+ p);
 				DShape check = isSelectedShape(p);
@@ -37,16 +37,16 @@ public class Canvas extends JPanel{
 				}
 			}
 			public void mouseReleased(MouseEvent e){
-				if(selected!=null){
-					DShape tempSel = selected;
-					clearSelected();
-					selected=tempSel;
+				if(selected!=null)
 					drawSelected();
-				}
 			}
 		});
+		/*
+		 * moves the selected shape
+		 */
 		addMouseMotionListener(new MouseAdapter() {
 			Point end=null;
+			
 			public void mouseDragged(MouseEvent e){//drag object
 				end = e.getPoint();
 				if(selected!=null){
@@ -125,9 +125,9 @@ public class Canvas extends JPanel{
 	/**
 	 * draws all the components in the canvas
 	 */
-	public void paintComponents(){
+	public void paintComponents(Graphics g){
 		for(DShape ds : shapes){
-			Graphics g = this.getGraphics();
+			g = this.getGraphics();
 			Graphics2D g2 = (Graphics2D) g;
 			ds.draw(g2, false);
 		}
