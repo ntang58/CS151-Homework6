@@ -84,7 +84,7 @@ public class Whiteboard extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				c.paintComponents(whiteBoard.getGraphics());
+				c.paintComponents(c.getGraphics());
 			}
 			
 		});

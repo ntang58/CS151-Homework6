@@ -8,12 +8,13 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
 
-public class Canvas extends JPanel{
+public class Canvas extends JPanel implements MouseListener, MouseMotionListener {
 	private ArrayList <DShape> shapes = new ArrayList<DShape>();
 	private DShape selected;
 	private DShape prevSelected = null;
@@ -25,38 +26,10 @@ public class Canvas extends JPanel{
 		super(new FlowLayout());
 		this.setPreferredSize(new Dimension(400, 400));
 		this.setBackground(Color.WHITE);
-		addMouseListener(new MouseAdapter(){
-			Point p = null;
-			public void mouseClicked(MouseEvent e){
-				p = new Point(e.getX(), e.getY());
-				//System.out.println("Pointer at"+ p);
-				DShape check = isSelectedShape(p);
-				if(check!=null){
-					selected= check;
-					drawSelected();
-				}
-			}
-			public void mouseReleased(MouseEvent e){
-				if(selected!=null)
-					drawSelected();
-			}
-		});
-		/*
-		 * moves the selected shape
-		 */
-		addMouseMotionListener(new MouseAdapter() {
-			Point end=null;
-			
-			public void mouseDragged(MouseEvent e){//drag object
-				end = e.getPoint();
-				if(selected!=null){
-					selected.setXY(end);
-					drawSelected();
-				}
-			}
-		});
-
+		addMouseListener(this);
+		addMouseMotionListener(this);
 	}
+	
 	/**
 	 * for checking to see if a shape is selected or not on this canvas
 	 * @return true if a shape is selected, false if not
@@ -84,6 +57,7 @@ public class Canvas extends JPanel{
 			Rectangle check = ds.getRectangle();
 			if(check.contains(p)){//get the bounds as a rectangle object and use contains(x, y)
 				if(check.contains(p) ){
+					ds.setSelected(true);//sets it as true 
 					lastselectedOne = ds;
 				}
 			}
@@ -94,18 +68,18 @@ public class Canvas extends JPanel{
 	/**
 	 * draws the current selected shape as black
 	 */
-	private void drawSelected(){
+	private void drawSelected(Graphics g){
 		if(selected!=null){
 			if(prevSelected!=null){
-				drawPrev();
+				drawPrev(g);
 			}
 			if(selected!=prevSelected){
 				prevColor = selected.getColor();
 			}
 			prevSelected = selected;
-			Graphics2D g = (Graphics2D)this.getGraphics();
+			Graphics2D g2= (Graphics2D)this.getGraphics();
 			selected.setColor(Color.BLACK);
-			selected.draw(g, true);
+			selected.draw(g2, true);
 		}
 	}
 	/**
@@ -118,7 +92,7 @@ public class Canvas extends JPanel{
 	/**
 	 * Used when previously selected component needs to redraw itself
 	 */
-	private void drawPrev(){
+	private void drawPrev(Graphics g){
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
 		prevSelected.setColor(prevColor);
 		prevSelected.draw(g2, false);
@@ -133,7 +107,19 @@ public class Canvas extends JPanel{
 			ds.draw(g2, false);
 		}
 	}
-	
+	private void repaintComps(Graphics g){
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setPaint(Color.WHITE);
+		g2.fillRect(0, 0, this.getWidth(), this.getHeight());
+		for(DShape ds: shapes){
+			if(ds.getSelected()==true){
+				drawSelected(g2);
+			}
+			else{
+				ds.draw(g2, false);
+			}
+		}
+	}
 	/**
 	 * creates and add a shape based on the DShapeModel passed in
 	 * @param d the DShapeModel to add
@@ -160,6 +146,51 @@ public class Canvas extends JPanel{
 	public void removeDShape(DShapeModel d ){
 		
 	}
+	/**
+	 * Used online resource : "http://www.java2s.com/Code/Java/Event/MoveShapewithmouse.htm" for moving objects with mouse
+	 */
+	//MouseMotionListner
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		Point end=null;
+		end = arg0.getPoint();
+		if(selected!=null){
+		selected.setXY(end);
+		}
+		repaintComps(this.getGraphics());
+	}
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+	}
+	//MouseListener
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		Point p = new Point(e.getX(), e.getY());
+		//System.out.println("Pointer at"+ p);
+		DShape check = isSelectedShape(p);
+		if(check!=null){
+			selected= check;
+			drawSelected(this.getGraphics());
+		}		
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if(selected!=null)
+			drawSelected(this.getGraphics());
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	
 }
 	
 
