@@ -44,6 +44,15 @@ public abstract class DShape{
 	public Point getPoint() {
 		return new Point(theModel.getX(), theModel.getY());
 	}
+	public Point[] getKnobs(){
+		Rectangle r = this.getRectangle();
+		Point bLeft = new Point((int)r.getMinX()-4, (int)r.getMaxY()-4);
+		Point bRight = new Point((int)r.getMaxX()-4, (int)r.getMaxY()-4);
+		Point tLeft = new Point((int)r.getMinX()-4,(int)r.getMinY()-4);
+		Point tRight = new Point((int)r.getMaxX()-4,(int)r.getMinY()-4);
+		Point [] knobs = {bRight, tRight, bLeft, tLeft};
+		return knobs;
+	}
 	public String toString(){
 		return getRectangle().toString() + theModel.getColor();
 	}

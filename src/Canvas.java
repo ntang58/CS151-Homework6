@@ -19,6 +19,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private DShape selected;
 	private DShape prevSelected = null;
 	private Color prevColor = null;
+	private static final int PIXEL9 = 9;
 	/**
 	 * Extends JPanel. The layout of the Panel is following a FlowLayout
 	 */
@@ -40,6 +41,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		}
 		else{
 			return true;
+		}
+	}
+	private void selectShape(MouseEvent e){
+		Point p = new Point(e.getX(), e.getY());
+		//System.out.println("Pointer at"+ p);
+		DShape check = isSelectedShape(p);
+		if(check!=null){
+			selected= check;
+			drawSelected(this.getGraphics());
 		}
 	}
 	/**
@@ -71,6 +81,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private void drawSelected(Graphics g){
 		if(selected!=null){
 			if(prevSelected!=null){
+				setSelectedFalse();
 				drawPrev(g);
 			}
 			if(selected!=prevSelected){
@@ -78,16 +89,17 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			}
 			prevSelected = selected;
 			Graphics2D g2= (Graphics2D)this.getGraphics();
-			selected.setColor(Color.BLACK);
+			//selected.setColor(Color.BLACK);//add knobs to the shape instead
+			Point [] knobs = selected.getKnobs();
+			addKnobs(selected, knobs, g2);
 			selected.draw(g2, true);
 		}
 	}
-	/**
-	 * clears the selected component from the canvas
-	 */
-	private void clearSelected(){
-		selected.setColor(Color.WHITE);
-		selected.draw((Graphics2D)this.getGraphics(), false);
+	private void addKnobs(DShape d, Point[] knobs, Graphics2D shapeGraphic){
+		for(Point kP : knobs){
+			shapeGraphic.setColor(Color.BLACK);
+			shapeGraphic.fillRect((int)kP.getX(), (int)kP.getY(), PIXEL9, PIXEL9);
+		}
 	}
 	/**
 	 * Used when previously selected component needs to redraw itself
@@ -96,6 +108,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
 		prevSelected.setColor(prevColor);
 		prevSelected.draw(g2, false);
+	}
+	private void setSelectedFalse(){
+		for(DShape ds: shapes)
+			if(ds.getSelected()==true)
+				ds.setSelected(false);
 	}
 	/**
 	 * draws all the components in the canvas
@@ -152,10 +169,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	//MouseMotionListner
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		Point end=null;
-		end = arg0.getPoint();
+		Point mPoint=null;
+		mPoint = arg0.getPoint();
 		if(selected!=null){
-		selected.setXY(end);
+			selected.setXY(mPoint);
 		}
 		repaintComps(this.getGraphics());
 	}
@@ -165,13 +182,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	//MouseListener
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		Point p = new Point(e.getX(), e.getY());
-		//System.out.println("Pointer at"+ p);
-		DShape check = isSelectedShape(p);
-		if(check!=null){
-			selected= check;
-			drawSelected(this.getGraphics());
-		}		
+		selectShape(e);
+		repaintComps(this.getGraphics());
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
@@ -188,9 +200,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		selectShape(e);
+		repaintComps(this.getGraphics());
 	}
-
-	
 }
 	
 
