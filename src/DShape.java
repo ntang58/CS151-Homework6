@@ -19,6 +19,18 @@ public abstract class DShape{
 	public void setXY(Point p) {
 		theModel.setXY(p);
 	}
+	public void setX(int x){
+		theModel.setX(x);
+	}
+	public void setY(int y){
+		theModel.setY(y);
+	}
+	public void setWidth(int width){
+		theModel.setWidth(width);
+	}
+	public void setHeight(int height){
+		theModel.setHeight(height);
+	}
 	public void setColor(Color c){
 		theModel.setColor(c);
 	}
@@ -43,6 +55,18 @@ public abstract class DShape{
 	 */
 	public Point getPoint() {
 		return new Point(theModel.getX(), theModel.getY());
+	}
+	public int getX(){
+		return theModel.getX();
+	}
+	public int getY(){
+		return theModel.getY();
+	}
+	public int getWidth(){
+		return theModel.getWidth();
+	}
+	public int getHeight(){
+		return theModel.getHeight();
 	}
 	public Point[] getKnobs(){
 		Rectangle r = this.getRectangle();

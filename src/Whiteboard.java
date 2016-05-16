@@ -46,34 +46,27 @@ public class Whiteboard extends JFrame{
 		rectCreate.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				int x = r.nextInt(100);
-				int y = r.nextInt(100);
-				int width = r.nextInt(100);
-				int height = r.nextInt(100);
+				/*int x = r.nextInt(10);
+				int y = r.nextInt(10);
+				int width = r.nextInt(20);
+				int height = r.nextInt(20);*/
 				DRectModel newRect= new DRectModel();
-				newRect.setBounds(new Rectangle(x,y,width,height));
+				newRect.setBounds(new Rectangle(10,10,20,20));
 				c.addDShape(newRect);
 			}
 		});
-		JComponent[] ctrls = new JComponent[4];
+		JComponent[] ctrls = new JComponent[5];
 		ctrls[0] = rectCreate;
 		JButton ovalCreate = new JButton("Draw Oval");
 		ovalCreate.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
-				int x = r.nextInt(100);
-				int y = r.nextInt(100);
-				int width = r.nextInt(100);
-				int height = r.nextInt(100);
+				int x = r.nextInt(10);
+				int y = r.nextInt(10);
+				int width = r.nextInt(20);
+				int height = r.nextInt(20);
 				DOvalModel newOval= new DOvalModel();
-				/*newOval.addModelListener(new ModelListener(){
-
-					public void modelChanged(DShapeModel model) {
-						
-					}
-					
-				});*/
-				newOval.setBounds(new Rectangle(x,y,width,height));
+				newOval.setBounds(new Rectangle(10,10,20,20));
 				c.addDShape(newOval);				
 			}
 			
@@ -112,6 +105,14 @@ public class Whiteboard extends JFrame{
 			}
 		});
 		ctrls[3]=setColor;
+		JButton deleteShape = new JButton("Delete");
+		deleteShape.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				c.removeSelected();
+			}
+			
+		});
+		ctrls[4] = deleteShape;
 		JPanel wBox = boxControls(ctrls);
 		for(Component comp : wBox.getComponents()){
 			((JComponent)comp).setAlignmentX(Box.LEFT_ALIGNMENT);
