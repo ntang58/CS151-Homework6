@@ -129,7 +129,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		int i=0;
 		for(Rectangle r : sknobs){
 			if(r.contains(e.getPoint())){
-				System.out.println("SLECTED "+r.getBounds());
+				//System.out.println("SLECTED "+r.getBounds());
 				return i;
 			}
 			i++;
@@ -163,7 +163,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setPaint(Color.WHITE);
 		g2.fillRect(0, 0, this.getWidth(), this.getHeight());
-		for(DShape ds: shapes){
+		for(int i = shapes.size()-1; i>=0;i--){
+			DShape ds = shapes.get(i);
 			if(ds.getSelected()==true){
 				drawSelected(g2);
 			}
@@ -197,7 +198,27 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	}
 	public void removeSelected(){
 		if(selected!=null){
-			
+			//System.out.println("before: "+shapes);
+			shapes.remove(selected);
+			selected=null;
+			repaintComps(this.getGraphics());
+			//System.out.println("after "+shapes);
+		}
+	}
+	public void moveSelectedFront(){
+		if(selected!=null){
+			System.out.println(shapes);
+			shapes.remove(selected);
+			shapes.add(0,selected);
+			System.out.println(shapes);
+			repaintComps(this.getGraphics());
+		}
+	}
+	public void moveSelectedBack(){
+		if(selected!=null){
+			shapes.add(selected);
+			shapes.remove(selected);
+			repaintComps(this.getGraphics());
 		}
 	}
 	/*
@@ -216,8 +237,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				int height = Math.abs((int)(anchor.getY()-drag.getY()));
 				selected.setWidth(width);
 				selected.setHeight(height);
-				if(selected.getPoint()!=anchor){
-				}
+				/*if(selected.getPoint()!=anchor){
+				}*/
 			}
 		}
 		drawSelected(this.getGraphics());

@@ -11,6 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JColorChooser;
 
@@ -25,7 +26,7 @@ public class Whiteboard extends JFrame{
 	 */
 	private static JPanel boxControls(JComponent[] controls){
 		JPanel west = new JPanel();
-		west.setLayout(new BoxLayout(west, BoxLayout.X_AXIS));
+		west.setLayout(new BoxLayout(west, BoxLayout.LINE_AXIS));
 		for(JComponent b: controls){
 			west.add(b);
 		}
@@ -55,7 +56,7 @@ public class Whiteboard extends JFrame{
 				c.addDShape(newRect);
 			}
 		});
-		JComponent[] ctrls = new JComponent[5];
+		JComponent[] ctrls = new JComponent[7];
 		ctrls[0] = rectCreate;
 		JButton ovalCreate = new JButton("Draw Oval");
 		ovalCreate.addActionListener(new ActionListener(){
@@ -113,12 +114,25 @@ public class Whiteboard extends JFrame{
 			
 		});
 		ctrls[4] = deleteShape;
+		JButton moveF = new JButton("Move Front");
+		moveF.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				c.moveSelectedFront();
+			}
+		});
+		ctrls[5] = moveF;
+		JButton moveB = new JButton("Move Back");
+		moveB.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				c.moveSelectedBack();
+			}
+		});
+		
+		ctrls[6] = moveB;
 		JPanel wBox = boxControls(ctrls);
-		for(Component comp : wBox.getComponents()){
-			((JComponent)comp).setAlignmentX(Box.LEFT_ALIGNMENT);
-		}
+		
 		westControls.add(wBox);
-		whiteBoard.add(westControls, BorderLayout.WEST);
+		whiteBoard.add(westControls, BorderLayout.NORTH);
 		whiteBoard.pack();
 		whiteBoard.setVisible(true);
 	}

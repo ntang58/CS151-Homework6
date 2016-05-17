@@ -78,7 +78,7 @@ public abstract class DShape{
 		return knobs;
 	}
 	public String toString(){
-		return getRectangle().toString() + theModel.getColor();
+		return getRectangle().toString() + theModel.getColor() + "selected "+selected;
 	}
 	public void setSelected(boolean flag){
 		selected=flag;
