@@ -207,10 +207,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	}
 	public void moveSelectedFront(){
 		if(selected!=null){
-			System.out.println(shapes);
 			shapes.remove(selected);
 			shapes.add(0,selected);
-			System.out.println(shapes);
 			repaintComps(this.getGraphics());
 		}
 	}
