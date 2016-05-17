@@ -56,16 +56,16 @@ public class Whiteboard extends JFrame{
 				c.addDShape(newRect);
 			}
 		});
-		JComponent[] ctrls = new JComponent[7];
+		JComponent[] ctrls = new JComponent[9];
 		ctrls[0] = rectCreate;
 		JButton ovalCreate = new JButton("Draw Oval");
 		ovalCreate.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
-				int x = r.nextInt(10);
+				/*int x = r.nextInt(10);
 				int y = r.nextInt(10);
 				int width = r.nextInt(20);
-				int height = r.nextInt(20);
+				int height = r.nextInt(20);*/
 				DOvalModel newOval= new DOvalModel();
 				newOval.setBounds(new Rectangle(10,10,20,20));
 				c.addDShape(newOval);				
@@ -129,10 +129,30 @@ public class Whiteboard extends JFrame{
 		});
 		
 		ctrls[6] = moveB;
+		JButton dLine = new JButton("Draw Line");
+		dLine.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				DLineModel lM = new DLineModel(10,15,20);
+				lM.setBounds(new Rectangle(10,10,20,20));
+				c.addDShape(lM);
+			}
+		});
+		ctrls[7]= dLine;
+		JButton dText = new JButton("Draw Text");
+		dText.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		ctrls[8] = dText;
 		JPanel wBox = boxControls(ctrls);
-		
 		westControls.add(wBox);
 		whiteBoard.add(westControls, BorderLayout.NORTH);
+		//panle for table, cetner the table in that panel
+		//add table whiteBoard.add(table, BorderLayout.SOUTH); 
 		whiteBoard.pack();
 		whiteBoard.setVisible(true);
 	}

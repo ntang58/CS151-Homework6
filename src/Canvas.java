@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -16,7 +15,7 @@ import javax.swing.JPanel;
 
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener {
 	private ArrayList <DShape> shapes = new ArrayList<DShape>();
-	private Rectangle [] sknobs = new Rectangle[4];
+	private ArrayList<Rectangle> sknobs = new ArrayList<Rectangle>();
 	private DShape selected;
 	private DShape prevSelected = null;
 	private Color prevColor = null;
@@ -107,12 +106,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		}
 	}
 	private void addKnobs(DShape d, Point[] knobs, Graphics2D shapeGraphic){
-		Rectangle [] selectedK = new Rectangle[4];
+		ArrayList<Rectangle> selectedK = new ArrayList<Rectangle>();
 		int i=0;
 		for(Point kP : knobs){
 			shapeGraphic.setColor(Color.BLACK);
 			shapeGraphic.fillRect((int)kP.getX(), (int)kP.getY(), PIXEL9, PIXEL9);
-			selectedK[i]= new Rectangle((int)kP.getX(),(int)kP.getY(), PIXEL9, PIXEL9);
+			selectedK.add(i, new Rectangle((int)kP.getX(),(int)kP.getY(), PIXEL9, PIXEL9));
 			i++;
 		}
 		this.sknobs = selectedK;
@@ -127,13 +126,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	 */
 	private int onSelectKnob(MouseEvent e){
 		int i=0;
-		for(Rectangle r : sknobs){
-			if(r.contains(e.getPoint())){
-				//System.out.println("SLECTED "+r.getBounds());
-				return i;
+		if(sknobs.size()==4){
+			for(Rectangle r : sknobs){
+				if(r.contains(e.getPoint())){
+					//System.out.println("SLECTED "+r.getBounds());
+					return i;
+				}
+				i++;
 			}
-			i++;
 		}
+		
 		return -1;
 	}
 	/**
@@ -186,7 +188,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			thisD=new DRect((DRectModel)d);
 		}
 		if(d instanceof DLineModel){
-			thisD=new DLine();
+			thisD=new DLine((DLineModel)d);
 		}
 		if(d instanceof DTextModel){
 			thisD = new DText();
@@ -194,6 +196,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		thisD.setXY(new Point(d.getX(), d.getY()));
 		thisD.setRectangle(new Rectangle(d.getX(), d.getY(), d.getWidth(), d.getHeight()));
 		shapes.add(thisD);
+		//System.out.println(shapes);
 		//System.out.println(shapes);
 	}
 	public void removeSelected(){
@@ -267,7 +270,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			move=true;
 			resize=false;
 		}
-		if(selected!=null){
+		if(selected!=null && sknobs.size()==4){
 			int movPt = onSelectKnob(e);
 			int opPt = 0;
 			if(movPt!=-1){//messy, I know
@@ -281,8 +284,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				{	opPt = 1;}
 				if(movPt==3)
 				{	opPt = 0;}
-				anchor = sknobs[opPt].getLocation();
-				drag = sknobs[movPt].getLocation();
+				anchor = sknobs.get(opPt).getLocation();
+				drag = sknobs.get(movPt).getLocation();
 				//selected.setWidth((int)drag.getX()-e.getX()+selected.getWidth());
 			}
 		}
