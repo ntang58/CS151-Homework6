@@ -12,11 +12,10 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener {
 	private ArrayList <DShape> shapes = new ArrayList<DShape>();
 	private ArrayList<Rectangle> sknobs = new ArrayList<Rectangle>();
-	private DShape selected;
+	private DShape selected=null;
 	private DShape prevSelected = null;
 	private Color prevColor = null;
 	private static final int PIXEL9 = 9;
@@ -32,10 +31,23 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		super(new FlowLayout());
 		this.setPreferredSize(new Dimension(400, 400));
 		this.setBackground(Color.WHITE);
+		this.clear();
 		addMouseListener(this);
 		addMouseMotionListener(this);
 	}
 	
+	private void clear() {
+		shapes.clear();
+		sknobs.clear();
+		selected = null;
+		prevSelected=null;
+		prevColor = null;
+		anchor = null;
+		drag = null;
+		movpt=0;
+		previousM = null;
+	}
+
 	/**
 	 * for checking to see if a shape is selected or not on this canvas
 	 * @return true if a shape is selected, false if not
@@ -143,7 +155,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	 */
 	private void drawPrev(Graphics g){
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
-		prevSelected.setColor(prevColor);
+		if(prevSelected instanceof DText){
+			prevSelected= (DText) prevSelected;
+		}
+		else{//only set color if a shape
+			prevSelected.setColor(prevColor);
+		}
 		prevSelected.draw(g2, false);
 	}
 	private void setSelectedFalse(){
@@ -155,6 +172,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	 * draws all the components in the canvas
 	 */
 	public void paintComponents(Graphics g){
+		super.paintComponent(g);
 		for(DShape ds : shapes){
 			g = this.getGraphics();
 			Graphics2D g2 = (Graphics2D) g;
@@ -163,11 +181,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	}
 	private void repaintComps(Graphics g){
 		Graphics2D g2 = (Graphics2D)g;
-		g2.setPaint(Color.WHITE);
+		g2.clearRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+		g2.setColor(Color.WHITE);
 		g2.fillRect(0, 0, this.getWidth(), this.getHeight());
 		for(int i = shapes.size()-1; i>=0;i--){
 			DShape ds = shapes.get(i);
 			if(ds.getSelected()==true){
+				//repaint(selected.getX(),selected.getY(),selected.getWidth(), selected.getHeight());
 				drawSelected(g2);
 			}
 			else{
@@ -191,7 +211,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			thisD=new DLine((DLineModel)d);
 		}
 		if(d instanceof DTextModel){
-			thisD = new DText();
+			thisD = new DText((DTextModel)d);
 		}
 		thisD.setXY(new Point(d.getX(), d.getY()));
 		thisD.setRectangle(new Rectangle(d.getX(), d.getY(), d.getWidth(), d.getHeight()));
@@ -222,6 +242,32 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			repaintComps(this.getGraphics());
 		}
 	}
+	public void setText(String t){
+		if(selected!=null&&selected instanceof DText){
+			selected = (DText)selected;
+			selected.setText(t);
+			repaintComps(this.getGraphics());
+		}
+	}
+	public String getText(){
+		if(selected!=null&&selected instanceof DText){
+			selected = (DText)selected;
+			return selected.getText();
+		}
+		return"";
+	}
+	public void setFont(String t){
+		if(selected!=null&&selected instanceof DText){
+			selected = (DText)selected;
+			selected.setFont(t);
+			repaintComps(this.getGraphics());
+		}
+	}
+	public boolean selectedIsTextShape(){
+		if(selected!=null&& selected instanceof DText)
+			return true;
+		return false;
+	}
 	/*
 	 * Used online resource : "http://www.java2s.com/Code/Java/Event/MoveShapewithmouse.htm" for moving objects with mouse
 	 */
@@ -233,13 +279,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				selected.setXY(new Point((int)arg0.getX()+(int)previousM.getX(),(int)arg0.getY()+(int)previousM.getY()));
 			}
 			if(resize==true&&move==false){
-				resizeSelected(arg0);
+				resizeSelected(arg0,false);
 			}
 		}
 		drawSelected(this.getGraphics());
 		repaintComps(this.getGraphics());
 	}
-	private void resizeSelected(MouseEvent arg0){
+	private void resizeSelected(MouseEvent arg0, boolean line){
 		drag.setLocation(arg0.getX(), arg0.getY());
 		Rectangle ancRect = new Rectangle(anchor);
 		ancRect.add(drag);

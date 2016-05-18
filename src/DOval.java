@@ -20,4 +20,16 @@ public class DOval extends DShape{
 		g.setColor(ovalData.getColor());
 		g.fillOval(ovalData.getX(), ovalData.getY(), ovalData.getWidth(), ovalData.getHeight());
 	}
+	@Override
+	public void setText(String t) {
+	}
+	@Override
+	public String getText() {
+		return "";
+	}
+	@Override
+	public void setFont(String t) {
+		// TODO Auto-generated method stub
+		
+	}
 }

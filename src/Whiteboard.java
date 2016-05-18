@@ -1,19 +1,21 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Random;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JColorChooser;
+import javax.swing.JTextField;
 
 public class Whiteboard extends JFrame{
 	private static JFrame whiteBoard;
@@ -133,8 +135,7 @@ public class Whiteboard extends JFrame{
 		dLine.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				DLineModel lM = new DLineModel(10,15,20);
-				lM.setBounds(new Rectangle(10,10,20,20));
+				DLineModel lM = new DLineModel(100,100,100,150);
 				c.addDShape(lM);
 			}
 		});
@@ -143,14 +144,69 @@ public class Whiteboard extends JFrame{
 		dText.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				DTextModel tM = new DTextModel("Hello", "Dialog");
+				tM.setX(20);
+				tM.setY(20);
+				tM.setHeight(100);
+				tM.setWidth(100);
+				c.addDShape(tM);
 			}
 		});
 		ctrls[8] = dText;
-		JPanel wBox = boxControls(ctrls);
-		westControls.add(wBox);
+		JPanel nBox = boxControls(ctrls);
+		westControls.add(nBox);
 		whiteBoard.add(westControls, BorderLayout.NORTH);
+		JPanel southBox = new JPanel();
+		southBox.setLayout(new BoxLayout(southBox, BoxLayout.Y_AXIS));
+		JTextField thisField = new JTextField("",20);
+		String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+		JComboBox <String> fontBox = new JComboBox<String>(fonts);
+		fontBox.setEnabled(false);
+		fontBox.addMouseListener(new MouseAdapter(){
+			 public void mouseClicked(MouseEvent e){
+	                if(c.selectedIsTextShape()==true){
+	                	thisField.setEnabled(true);
+	                	fontBox.setEnabled(true);
+	                	thisField.setText(c.getText());
+	                }
+	                else{
+	                	thisField.setEnabled(false);
+	                	fontBox.setEnabled(false);
+	                	thisField.setText("");
+	                }
+	            }
+		});
+		fontBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String fType = (String)fontBox.getSelectedItem();
+				c.setFont(fType);
+			}
+		});
+		thisField.setEnabled(false);
+		thisField.addMouseListener(new MouseAdapter(){
+			@Override
+            public void mouseClicked(MouseEvent e){
+                if(c.selectedIsTextShape()==true){
+                	thisField.setEnabled(true);
+                	fontBox.setEnabled(true);
+                	thisField.setText(c.getText());
+                }
+                else{
+                	thisField.setEnabled(false);
+                	fontBox.setEnabled(false);
+                	thisField.setText("");
+                }
+            }
+		});
+		thisField.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				c.setText(thisField.getText());
+				thisField.setText("");
+			}
+		});
+		southBox.add(thisField);
+		southBox.add(fontBox);
+		whiteBoard.add(southBox, BorderLayout.SOUTH);
 		//panle for table, cetner the table in that panel
 		//add table whiteBoard.add(table, BorderLayout.SOUTH); 
 		whiteBoard.pack();

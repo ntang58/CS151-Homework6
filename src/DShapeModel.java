@@ -104,4 +104,7 @@ public class DShapeModel {
 	public Color getColor(){
 		return color;
 	}
+	public String toString(){
+		return"X= "+this.x+" Y= "+this.y+" Height= "+this.height+" Width= "+this.width;
+	}
 }

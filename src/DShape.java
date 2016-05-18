@@ -86,4 +86,7 @@ public abstract class DShape{
 	public boolean getSelected(){
 		return selected;
 	}
+	public abstract void setText(String t);
+	public abstract String getText();
+	public abstract void setFont(String t);
 }

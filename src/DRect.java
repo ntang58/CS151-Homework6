@@ -15,4 +15,15 @@ public class DRect extends DShape{
 		g.setColor(rectData.getColor());
 		g.fillRect(rectData.getX(), rectData.getY(), rectData.getWidth(), rectData.getHeight());
 	}
+	@Override
+	public void setText(String t) {
+	}
+	@Override
+	public String getText() {
+		return "";
+	}
+	@Override
+	public void setFont(String t) {
+		
+	}
 }
