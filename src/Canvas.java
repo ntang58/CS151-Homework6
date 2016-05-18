@@ -23,7 +23,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private Point previousM=null;
 	private boolean move;
 	private boolean resize;
-	private Point anchor, drag;
+	private Rectangle anchor, drag;
+	private int movpt =0;
 	/**
 	 * Extends JPanel. The layout of the Panel is following a FlowLayout
 	 */
@@ -135,7 +136,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				i++;
 			}
 		}
-		
 		return -1;
 	}
 	/**
@@ -233,17 +233,17 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				selected.setXY(new Point((int)arg0.getX()+(int)previousM.getX(),(int)arg0.getY()+(int)previousM.getY()));
 			}
 			if(resize==true&&move==false){
-				drag.setLocation(arg0.getX(), arg0.getY());
-				int width = Math.abs((int)(anchor.getX() - drag.getX()));
-				int height = Math.abs((int)(anchor.getY()-drag.getY()));
-				selected.setWidth(width);
-				selected.setHeight(height);
-				/*if(selected.getPoint()!=anchor){
-				}*/
+				resizeSelected(arg0);
 			}
 		}
 		drawSelected(this.getGraphics());
 		repaintComps(this.getGraphics());
+	}
+	private void resizeSelected(MouseEvent arg0){
+		drag.setLocation(arg0.getX(), arg0.getY());
+		Rectangle ancRect = new Rectangle(anchor);
+		ancRect.add(drag);
+		selected.setRectangle(ancRect);
 	}
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
@@ -271,21 +271,21 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			resize=false;
 		}
 		if(selected!=null && sknobs.size()==4){
-			int movPt = onSelectKnob(e);
+			movpt = onSelectKnob(e);
 			int opPt = 0;
-			if(movPt!=-1){//messy, I know
+			if(movpt!=-1){//messy, I know
 				resize=true;
 				move = false;
-				if(movPt ==0)
+				if(movpt ==0)
 				{	opPt = 3;}
-				if(movPt ==1)
+				if(movpt ==1)
 				{	opPt = 2;}
-				if(movPt==2)
+				if(movpt==2)
 				{	opPt = 1;}
-				if(movPt==3)
+				if(movpt==3)
 				{	opPt = 0;}
-				anchor = sknobs.get(opPt).getLocation();
-				drag = sknobs.get(movPt).getLocation();
+				anchor = sknobs.get(opPt);
+				drag = sknobs.get(movpt);
 				//selected.setWidth((int)drag.getX()-e.getX()+selected.getWidth());
 			}
 		}
