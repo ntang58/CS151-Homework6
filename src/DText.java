@@ -16,7 +16,7 @@ public class DText extends DShape{
 	}
 	@Override
 	public void draw(Graphics g, boolean selected){
-		super.setSelected(true);
+		super.setSelected(selected);
 		Rectangle superRe = super.getRectangle();
 		g.setColor(textData.getColor());
 		g.setFont(new Font(textData.getFont(), (int)superRe.getWidth(), (int) superRe.getHeight()));

@@ -23,7 +23,7 @@ public class DShapeModel {
 		color = Color.GRAY;
 	}
 	/**
-	 * adds a model listener to this model to do something when this model gets changed
+	 * adds a model listener to this model 
 	 * @param observer 
 	 */
 	public void addModelListener(ModelListener observer){

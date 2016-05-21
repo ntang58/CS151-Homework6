@@ -32,6 +32,17 @@ public class DLineModel extends DShapeModel {
 		this.p2 = p2;
 		lRectangle.add(p2);
 	}
+	//used these when resizing the line, elias
+	public void moveP1(int x,int y){
+		p1.setLocation(x,y);
+	}
+	
+	public void moveP2(int x, int y){
+		p2.setLocation(x,y);
+	}
+	
+	
+	
 	public void getRectangle(){
 		
 	}
