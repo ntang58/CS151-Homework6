@@ -12,6 +12,7 @@ public class DShapeModel {
 	private int height;
 	private int width;
 	private Color color;
+	private boolean selected;
 	/**
 	 * default constructor. Sets x,y coordinates to 0 and height and width to 0. Color is set to Gray
 	 */
@@ -88,6 +89,9 @@ public class DShapeModel {
 		this.color = color;
 		notifyListeners();
 	}
+	public void setSelected(boolean selected){
+		this.selected = selected;
+	}
 	//getters----------------------
 	public int getHeight(){
 		return height;
@@ -104,7 +108,10 @@ public class DShapeModel {
 	public Color getColor(){
 		return color;
 	}
+	public boolean getSelected(){
+		return selected;
+	}
 	public String toString(){
-		return"X= "+this.x+" Y= "+this.y+" Height= "+this.height+" Width= "+this.width;
+		return"X= "+this.x+" Y= "+this.y+" Height= "+this.height+" Width= "+this.width +" "+ selected;
 	}
 }

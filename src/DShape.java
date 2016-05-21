@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 public abstract class DShape{
 	private DShapeModel theModel = null;
-	private boolean selected;
 	protected void attachModel(DShapeModel ds){
 		theModel = ds;
 	}
@@ -78,13 +77,16 @@ public abstract class DShape{
 		return knobs;
 	}
 	public String toString(){
-		return getRectangle().toString() + theModel.getColor() + "selected "+selected;
+		return getRectangle().toString() + theModel.getColor() + "selected "+theModel.getSelected();
 	}
 	public void setSelected(boolean flag){
-		selected=flag;
+		theModel.setSelected(flag);
 	}
 	public boolean getSelected(){
-		return selected;
+		return theModel.getSelected();
+	}
+	public DShapeModel getModel(){
+		return this.theModel;
 	}
 	public abstract void setText(String t);
 	public abstract String getText();

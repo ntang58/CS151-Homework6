@@ -1,7 +1,7 @@
 import java.awt.Color;
 public class DTextModel extends DShapeModel {
-	String text;
-	String font;
+	private String text;
+	private String f;
 	public DTextModel(){
 		super();
 	}
@@ -14,18 +14,21 @@ public class DTextModel extends DShapeModel {
 	}
 	public DTextModel(String text, String font){
 		this.text = text;
-		this.font = font;
+		this.f = font;
 	}
 	public void setText(String text){
 		this.text = text;
 	}
+	public String getText(){
+		return this.text;
+	}
 	public void setFont(String font){
-		this.font = font;
+		this.f = font;
 	}
 	public String getFont(){
-		return this.font;
+		return this.f;
 	}
 	public String toString(){
-		return super.toString() +" "+text+" "+font;
+		return super.toString() +" "+text+" "+f;
 	}
 }
