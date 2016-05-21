@@ -335,6 +335,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				anchor = sknobs.get(opPt);
 				drag = sknobs.get(movpt);
 				//selected.setWidth((int)drag.getX()-e.getX()+selected.getWidth());
+				//
 			}
 		}
 	}
