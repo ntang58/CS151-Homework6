@@ -37,6 +37,8 @@ public class Whiteboard extends JFrame{
 	private JFrame colorChooser = new JFrame("Select a Color");
 	private Canvas c;
 	private String nwMode = "not connected";
+	private boolean server = false;
+	private boolean client = false;
 	/**
 	 * @param an array of components to add to the panel
 	 * @return JPanel that represents this whiteboard's controls
@@ -62,6 +64,7 @@ public class Whiteboard extends JFrame{
 		westControls.setLayout(new BoxLayout(westControls, BoxLayout.Y_AXIS));
 	
 		c = new Canvas();
+		c.setEnabled(true);
 		whiteBoard.add(c, BorderLayout.EAST);
 		JPanel southBox = new JPanel();
 		southBox.setLayout(new BoxLayout(southBox, BoxLayout.Y_AXIS));
@@ -277,8 +280,11 @@ public class Whiteboard extends JFrame{
 			@Override
 			//TODO
 			public void actionPerformed(ActionEvent e) {
-				nwMode = "server";
-				status.setText("Status: "+nwMode);
+				if(server==false&&client==false){
+					nwMode = "server";
+					status.setText("Status: "+nwMode);
+					server=true;
+				}
 			}
 		});
 		
@@ -288,8 +294,13 @@ public class Whiteboard extends JFrame{
 			@Override
 			//TODO
 			public void actionPerformed(ActionEvent e) {
-				nwMode = "client";
-				status.setText("Status: "+nwMode);
+				if(server==false&&client==false){
+					nwMode = "client";
+					status.setText("Status: "+nwMode);
+					c.clear();
+					c.setEnabled(false);
+					client=true;
+				}
 			}
 			
 		});
@@ -331,7 +342,9 @@ public class Whiteboard extends JFrame{
 	      }
 	}
 	public static void main(String[] args){
-		Whiteboard whiteboard = new Whiteboard();
-		whiteboard.CreateAndShowGUI();
+		for(int i=0; i<3;i++){
+			Whiteboard whiteboard = new Whiteboard();
+			whiteboard.CreateAndShowGUI();
+		}
 	}
 }
