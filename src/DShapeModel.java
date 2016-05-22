@@ -118,6 +118,6 @@ public class DShapeModel {
 		return selected;
 	}
 	public String toString(){
-		return"X= "+this.x+" Y= "+this.y+" Height= "+this.height+" Width= "+this.width +" "+ selected;
+		return"X= "+this.x+" Y= "+this.y+" Height= "+this.height+" Width= "+this.width +" "+"Color= "+this.color+" "+ selected;
 	}
 }

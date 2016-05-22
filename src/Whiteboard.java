@@ -151,6 +151,7 @@ public class Whiteboard extends JFrame{
 				int height = r.nextInt(20);*/
 				DRectModel newRect= new DRectModel();
 				newRect.setBounds(new Rectangle(10,10,20,20));
+				newRect.setColor(Color.RED);
 				if(server==true){
 					doSend(newRect,"add");
 				}
@@ -248,6 +249,9 @@ public class Whiteboard extends JFrame{
 		JButton moveF = new JButton("Move Front");
 		moveF.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
+				if(server==true){
+					doSend(c.getSelectedModel(),"front");
+				}
 				c.moveSelectedFront();
 			}
 		});
@@ -256,6 +260,9 @@ public class Whiteboard extends JFrame{
 		moveB.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				c.moveSelectedBack();
+				if(server==true){
+					doSend(c.getSelectedModel(),"back");
+				}
 			}
 		});
 		ctrls[8] = moveB;
@@ -387,6 +394,14 @@ public class Whiteboard extends JFrame{
 	                }
 	                if(verb.equals("remove")){
 	                	c.remove(changeModel, id);
+	                	c.paintComponents(c.getGraphics());
+	                }
+	                if(verb.equals("front")){
+	                	c.moveFront(changeModel, id);
+	                	c.paintComponents(c.getGraphics());
+	                }
+	                if(verb.equals("back")){
+	                	c.moveBack(changeModel, id);
 	                	c.paintComponents(c.getGraphics());
 	                }
 				}
