@@ -177,7 +177,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	 * draws all the components based on graphics
 	 */
 	public void paintComponents(Graphics g){
-		super.paintComponent(g);
+		//super.paintComponent(g);
 		for(DShape ds : shapes){
 			//g = this.getGraphics();
 			Graphics2D g2 = (Graphics2D) g;
@@ -220,7 +220,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		}
 		if(clientMode==true){
 			codes.add(code);
-			System.out.println(codes);
+			//System.out.println(codes);
 		}
 		d.addModelListener(new ListenerObject());
 		thisD.setXY(new Point(d.getX(), d.getY()));
@@ -230,34 +230,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		//System.out.println(shapes);
 		//System.out.println(shapes);
 	}
-	public void remove(DShapeModel ds, Integer i){
-		int deleteIndex = 0;
-		//System.out.println(shapeModels);
-		//System.out.println(codes);
-		for(Integer co : codes){
-			if(co.equals(i)){
-				//System.out.println("True "+co);
-				/*
-				 *if the code of the passed in shape matches the list of codes in this canvas,
-				 *get the shape to remove + the view to remove and remove the model, view and 
-				 *code from list.
-				 */
-				DShapeModel toRemove = shapeModels.get(deleteIndex);
-				DShape toRemoveView = shapes.get(deleteIndex);
-				if(shapeModels.remove(toRemove)&&shapes.remove(toRemoveView)&&codes.remove(i)){
-					System.out.println("removed");
-					break;
-				}
-				else{
-					System.out.println("not removed");
-				}
-			}
-			deleteIndex++;
-		}
-		/*if(shapeModels.remove(i)==false&&shapes.remove(i)==false){
-			System.out.println("cannot remove");
-		}*/
-	}
+	
 	public int getSelectedCode(){
 		if(selected!=null){
 			return selected.hashCode();
@@ -285,11 +258,94 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			//System.out.println("after "+shapes);
 		}
 	}
+	public void remove(DShapeModel ds, Integer i){
+		int deleteIndex = 0;
+		//System.out.println(shapeModels);
+		//System.out.println(codes);
+		for(Integer code : codes){
+			if(code.equals(i)){
+				//System.out.println("True "+co);
+				/*
+				 *if the code of the passed in shape matches the list of codes in this canvas,
+				 *get the shape to remove + the view to remove and remove the model, view and 
+				 *code from list.
+				 */
+				DShapeModel toRemove = shapeModels.get(deleteIndex);
+				DShape toRemoveView = shapes.get(deleteIndex);
+				if(shapeModels.remove(toRemove)&&shapes.remove(toRemoveView)&&codes.remove(i)){
+					System.out.println("removed");
+					break;
+				}
+				else{
+					System.out.println("not removed");
+				}
+			}
+			deleteIndex++;
+		}
+		/*if(shapeModels.remove(i)==false&&shapes.remove(i)==false){
+			System.out.println("cannot remove");
+		}*/
+	}
+	public void moveFront(DShapeModel ds, Integer i){
+		//"moves object to back of the list" (graphically, the shape will appear in front of shapes)
+		DShape toShapeBack = null;
+		DShapeModel toModelBack = null;
+		int deleteIndex=0;
+		for(Integer code :codes){
+			if(code.equals(i)){
+				toShapeBack = shapes.get(deleteIndex);
+				toModelBack =shapeModels.get(deleteIndex); 
+				//System.out.println("OUT");
+				break;
+			}
+			deleteIndex++;
+		}
+		if(shapeModels.remove(toModelBack)&&shapes.remove(toShapeBack)&&codes.remove(i)){
+			shapes.add(toShapeBack);
+			shapeModels.add(toModelBack);
+			codes.add(i);
+			//this.repaintComps(this.getGraphics());
+			//System.out.println("Move to Back");
+		}
+		else{
+			//System.out.println(shapeModels +" "+ codes+" "+ shapes);
+			System.out.println("Could not move to Front: " +ds);
+		}
+	}
 	public void moveSelectedFront(){
 		if(selected!=null){
+			DShapeModel tempSelectedModel=this.getSelectedModel();
+			shapeModels.remove(tempSelectedModel);
+			shapeModels.add(0,tempSelectedModel);
 			shapes.remove(selected);
 			shapes.add(0,selected);
 			repaintComps(this.getGraphics());
+		}
+	}
+	public void moveBack(DShapeModel ds, Integer i){
+		//"moves object to the front of the list" (graphically, the shape will appear behind shapes)
+		DShape toShapeFront = null;
+		DShapeModel toModelFront = null;
+		int deleteIndex=0;
+		for(Integer code :codes){
+			if(code.equals(i)){
+				toShapeFront = shapes.get(deleteIndex);
+				toModelFront =shapeModels.get(deleteIndex); 
+				//System.out.println("OUT");
+				break;
+			}
+			deleteIndex++;
+		}
+		if(shapeModels.remove(toModelFront)&&shapes.remove(toShapeFront)&&codes.remove(i)){
+			shapes.add(0, toShapeFront);
+			shapeModels.add(0,toModelFront);
+			codes.add(0,i);
+			//this.repaintComps(this.getGraphics());
+			//System.out.println("Move to front");
+		}
+		else{
+			//System.out.println(shapeModels +" "+ codes+" "+ shapes);
+			System.out.println("Could not move to back: " +ds);
 		}
 	}
 	public void moveSelectedBack(){
@@ -412,7 +468,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			move=false; resize=false;
 			selected.setSelected(false);
 			repaintComps(this.getGraphics());
-			System.out.println("not selected");
+			//System.out.println("not selected");
 		}
 		if(selected!=null && sknobs.size()==4&&super.isEnabled()){
 			movpt = onSelectKnob(e);
