@@ -18,8 +18,8 @@ public class DLineModel extends DShapeModel {
 		p1 = new Point(x1,y1);
 		p2 = new Point(x2,y2);
 		lRectangle = new Rectangle(p1);
-		lRectangle.height=(int)(p2.getY()-p1.getY());
-		lRectangle.width = (int)(p2.getX()-p1.getX());
+		lRectangle.height=Math.abs((int)(p2.getY()-p1.getY()));
+		lRectangle.width = 10;
 		super.setXY(p1);
 		super.setBounds(lRectangle);
 	}
@@ -40,10 +40,8 @@ public class DLineModel extends DShapeModel {
 	public void moveP2(int x, int y){
 		p2.setLocation(x,y);
 	}
-	
-	
-	
-	public void getRectangle(){
-		
+
+	public Rectangle getRectangle(){
+		return lRectangle;
 	}
 }

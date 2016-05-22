@@ -224,6 +224,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		//System.out.println(shapes);
 		//System.out.println(shapes);
 	}
+	public void remove(DShapeModel ds){
+		
+	}
 	public void removeSelected(){
 		if(selected!=null){
 			//System.out.println("before: "+shapes);
@@ -295,10 +298,17 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	//MouseMotionListner
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		if(selected!=null&&selected.getSelected()==true){
+		if(selected!=null &&super.isEnabled()){
 			if(move==true&&resize==false){
-				selected.setXY(new Point((int)arg0.getX()+(int)previousM.getX(),(int)arg0.getY()+(int)previousM.getY()));
-				//System.out.println(shapeModels);
+				//code changd here by elias in order to get DLine working
+				if(selected instanceof DLine){
+					((DLine) selected).moveP1((int)arg0.getX()+(int)previousM.getX(),(int)arg0.getY()+(int)previousM.getY());
+					((DLine) selected).moveP2((int)arg0.getX()+(int)previousM.getX(),(int)arg0.getY()+(int)previousM.getY() + 20);
+					selected.setXY(new Point((int)arg0.getX()+(int)previousM.getX(),(int)arg0.getY()+(int)previousM.getY()));
+				} 
+				else {
+					selected.setXY(new Point((int)arg0.getX()+(int)previousM.getX(),(int)arg0.getY()+(int)previousM.getY()));
+				}
 			}
 			if(resize==true&&move==false){
 				boolean line = false;
@@ -307,13 +317,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				}
 				resizeSelected(arg0,line);
 			}
+			drawSelected(this.getGraphics());
+			repaintComps(this.getGraphics());
 		}
-		//drawSelected(this.getGraphics());
-		repaintComps(this.getGraphics());
 	}
 	private void resizeSelected(MouseEvent arg0, boolean line){
 		if(line){
-			System.out.println("line");
+			
 		}
 		else{
 			drag.setLocation(arg0.getX(), arg0.getY());
@@ -343,16 +353,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if(selectShape(e)){
+		if(super.isEnabled()&&selectShape(e)){
 			move=true;
 			resize=false;
 			repaintComps(this.getGraphics());
 		}
-		else if(selected!=null){
+		else if(selected!=null &&super.isEnabled()){
 			selected.setSelected(false);
 			repaintComps(this.getGraphics());
 		}
-		if(selected!=null && sknobs.size()==4){
+		if(selected!=null && sknobs.size()==4&&super.isEnabled()){
 			movpt = onSelectKnob(e);
 			int opPt = 0;
 			if(movpt!=-1){//messy, I know
@@ -366,6 +376,22 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				{	opPt = 1;}
 				if(movpt==3)
 				{	opPt = 0;}
+				anchor = sknobs.get(opPt);
+				drag = sknobs.get(movpt);
+			}
+		}
+		if(selected!=null && sknobs.size()==2&&super.isEnabled()){
+			movpt = onSelectKnob(e);
+			int opPt = 0;
+			resize=true;
+			move=false;
+			if(movpt!=-1){
+				if(movpt == 0){
+					opPt = 1;
+				}
+				if(movpt==1){
+					opPt=0;
+				}
 				anchor = sknobs.get(opPt);
 				drag = sknobs.get(movpt);
 			}

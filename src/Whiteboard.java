@@ -1,6 +1,5 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -11,10 +10,19 @@ import java.awt.image.BufferedImage;
 import java.beans.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import javax.swing.BoxLayout;
@@ -29,7 +37,6 @@ import javax.swing.JColorChooser;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-
 public class Whiteboard extends JFrame{
 	private JFrame whiteBoard;
 	private JPanel westControls;
@@ -39,6 +46,9 @@ public class Whiteboard extends JFrame{
 	private String nwMode = "not connected";
 	private boolean server = false;
 	private boolean client = false;
+	private ClientHandler clientHandler;
+	private ServerAccepter serverAccepter;
+	 private java.util.List<ObjectOutputStream> outputs = new ArrayList<ObjectOutputStream>();//list of "clients" to send to
 	/**
 	 * @param an array of components to add to the panel
 	 * @return JPanel that represents this whiteboard's controls
@@ -141,6 +151,9 @@ public class Whiteboard extends JFrame{
 				int height = r.nextInt(20);*/
 				DRectModel newRect= new DRectModel();
 				newRect.setBounds(new Rectangle(10,10,20,20));
+				if(server==true){
+					doSend(newRect,"add");
+				}
 				c.addDShape(newRect);
 			}
 		});
@@ -155,6 +168,9 @@ public class Whiteboard extends JFrame{
 				int height = r.nextInt(20);*/
 				DOvalModel newOval= new DOvalModel();
 				newOval.setBounds(new Rectangle(10,10,20,20));
+				if(server==true){
+					doSend(newOval,"add");
+				}
 				c.addDShape(newOval);
 			}
 			
@@ -178,6 +194,9 @@ public class Whiteboard extends JFrame{
 				tM.setY(20);
 				tM.setHeight(100);
 				tM.setWidth(100);
+				if(server==true){
+					doSend(tM,"add");
+				}
 				c.addDShape(tM);
 			}
 		});
@@ -284,6 +303,7 @@ public class Whiteboard extends JFrame{
 					nwMode = "server";
 					status.setText("Status: "+nwMode);
 					server=true;
+					doServer();
 				}
 			}
 		});
@@ -300,9 +320,9 @@ public class Whiteboard extends JFrame{
 					c.clear();
 					c.setEnabled(false);
 					client=true;
+					doClient();
 				}
 			}
-			
 		});
 		ctrls [14] = clientS;
 		return ctrls;
@@ -339,6 +359,102 @@ public class Whiteboard extends JFrame{
 	      }
 	      catch (IOException ex) {
 	          ex.printStackTrace();
+	      }
+	}
+	private class ClientHandler extends Thread{
+		int port;
+		String name;
+		ClientHandler(String name, int port){
+			this.name = name;
+			this.port = port;
+		}
+		public void run(){
+			try{
+				Socket toServer = new Socket(name,port);
+				ObjectInputStream input = new ObjectInputStream(toServer.getInputStream());
+				System.out.println("Connected");
+				while(true){
+					String stringAndModel =(String) input.readObject();//reads Command String
+					XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(stringAndModel.getBytes()));
+	                String verb = (String)decoder.readObject();
+	                DShapeModel changeModel = (DShapeModel) decoder.readObject();
+	                System.out.println(verb +" "+ changeModel);
+	                if(verb.equals("add")){
+		                c.addDShape(changeModel);
+		                c.paintComponents(c.getGraphics());
+	                }
+	                if(stringAndModel.equals("remove")){
+	                	c.remove(changeModel);
+	                }
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+	private class ServerAccepter extends Thread{
+		int port;
+		ServerAccepter(int port){
+			this.port = port;
+		}
+		public void run(){
+			try{
+				ServerSocket server = new ServerSocket(port);
+				while(true){
+					Socket toClient = null;
+					toClient =server.accept();
+					addOutput(new ObjectOutputStream(toClient.getOutputStream()));
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+	public  synchronized void addOutput(ObjectOutputStream s){
+		outputs.add(s);
+	}
+	public void doSend(DShapeModel ds, String verb){
+		sendRemote(ds,verb);
+	}
+	public synchronized void sendRemote(DShapeModel ds, String verb){
+		System.out.println("Server send");
+		OutputStream memStream = new ByteArrayOutputStream();
+		XMLEncoder encoder = new XMLEncoder(memStream);
+		encoder.writeObject(verb);
+		encoder.writeObject(ds);
+		encoder.close();
+	    String xmlString = memStream.toString();
+		Iterator<ObjectOutputStream> it = outputs.iterator();
+		while(it.hasNext()){
+	          ObjectOutputStream out = it.next();
+	          try {
+	              out.writeObject(xmlString);
+	              out.flush();
+	          }
+	          catch (Exception ex) {
+	              ex.printStackTrace();
+	              it.remove();
+	          }
+		}
+	}
+	public void doServer(){
+		String result = JOptionPane.showInputDialog("Run server on port", "8001");
+	      if (result!=null) {
+	    	  System.out.println(result);
+	          System.out.println("server: start");
+	          serverAccepter = new ServerAccepter(Integer.parseInt(result.trim()));
+	          serverAccepter.start();
+	      }
+	}
+	public void doClient(){
+		  String result = JOptionPane.showInputDialog("Connect to host:port", "127.0.0.1:8001");
+	      if (result!=null) {
+	          String[] parts = result.split(":");
+	          System.out.println("client: start");
+	          clientHandler = new ClientHandler(parts[0].trim(), Integer.parseInt(parts[1].trim()));
+	          clientHandler.start();
 	      }
 	}
 	public static void main(String[] args){

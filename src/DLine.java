@@ -8,7 +8,7 @@ public class DLine extends DShape{
 		super.attachModel(pointD);
 	}
 	public Point[] getKnobs(){	
-		Point t1 = new Point((int)lineData.getP1().getX(), (int)lineData.getP2().getY());
+		Point t1 = new Point((int)lineData.getP1().getX(), (int)lineData.getP1().getY());
 		Point t2 = new Point((int)lineData.getP2().getX(), (int)lineData.getP2().getY());
 		Point [] knobs = {t1, t2};
 		return knobs;
@@ -25,6 +25,12 @@ public class DLine extends DShape{
 	@Override
 	public String getText() {
 		return "";
+	}
+	public void moveP1(int x, int y){
+		lineData.moveP1(x,y);
+	}
+	public void moveP2(int x, int y){
+		lineData.moveP2(x,y);
 	}
 	@Override
 	public void setFont(String t) {
