@@ -224,8 +224,47 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		//System.out.println(shapes);
 		//System.out.println(shapes);
 	}
-	public void remove(DShapeModel ds){
-		
+	public void remove(DShapeModel ds, Integer i){
+		for(DShapeModel dModel :shapeModels){
+			if(dModel.hashCode()==i){
+				System.out.println(dModel.hashCode());
+				if(shapeModels.remove(dModel)){
+					System.out.println("removed");
+					break;
+				}
+				else{
+					System.out.println("not removed");
+				}
+			}
+		}
+		/*if(shapeModels.remove(i)==false&&shapes.remove(i)==false){
+			System.out.println("cannot remove");
+		}*/
+	}
+	public int getSelectedInt(){
+		int i=-1;
+		if(selected!=null){
+			i=0;
+			for(DShape d: shapes){
+				if(d.getSelected()==true){	
+					break;
+				}
+				else{
+					i++;
+				}
+			}
+		}
+		return i;
+	}
+	public DShapeModel getSelectedModel(){
+		DShapeModel retModel = null;
+		for(DShapeModel ds : shapeModels){
+			if(ds.getSelected()){
+				retModel = ds;
+				break;
+			}
+		}
+		return retModel;
 	}
 	public void removeSelected(){
 		if(selected!=null){

@@ -237,6 +237,10 @@ public class Whiteboard extends JFrame{
 		JButton deleteShape = new JButton("Delete Selected");
 		deleteShape.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
+				if(server==true){
+					int remove = c.getSelectedInt();
+					doSend(c.getSelectedModel(),"remove");
+				}
 				c.removeSelected();
 			}
 			
@@ -299,12 +303,10 @@ public class Whiteboard extends JFrame{
 			@Override
 			//TODO
 			public void actionPerformed(ActionEvent e) {
-				if(server==false&&client==false){
-					nwMode = "server";
-					status.setText("Status: "+nwMode);
-					server=true;
-					doServer();
-				}
+				nwMode = "server";
+				status.setText("Status: "+nwMode);
+				server=true;
+				doServer();
 			}
 		});
 		
@@ -314,14 +316,12 @@ public class Whiteboard extends JFrame{
 			@Override
 			//TODO
 			public void actionPerformed(ActionEvent e) {
-				if(server==false&&client==false){
 					nwMode = "client";
 					status.setText("Status: "+nwMode);
 					c.clear();
 					c.setEnabled(false);
 					client=true;
 					doClient();
-				}
 			}
 		});
 		ctrls [14] = clientS;
@@ -378,13 +378,16 @@ public class Whiteboard extends JFrame{
 					XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(stringAndModel.getBytes()));
 	                String verb = (String)decoder.readObject();
 	                DShapeModel changeModel = (DShapeModel) decoder.readObject();
-	                System.out.println(verb +" "+ changeModel);
+	                changeModel.setSelected(false);
+	                Integer id = (Integer)decoder.readObject();
+	                //System.out.println(verb +" "+ changeModel+" "+id);
 	                if(verb.equals("add")){
 		                c.addDShape(changeModel);
 		                c.paintComponents(c.getGraphics());
 	                }
-	                if(stringAndModel.equals("remove")){
-	                	c.remove(changeModel);
+	                if(verb.equals("remove")){
+	                	c.remove(changeModel, id);
+	                	c.paintComponents(c.getGraphics());
 	                }
 				}
 			}
@@ -416,14 +419,16 @@ public class Whiteboard extends JFrame{
 		outputs.add(s);
 	}
 	public void doSend(DShapeModel ds, String verb){
-		sendRemote(ds,verb);
+		int i=ds.hashCode();
+		sendRemote(ds,verb, i);
 	}
-	public synchronized void sendRemote(DShapeModel ds, String verb){
+	public synchronized void sendRemote(DShapeModel ds, String verb, Integer i){
 		System.out.println("Server send");
 		OutputStream memStream = new ByteArrayOutputStream();
 		XMLEncoder encoder = new XMLEncoder(memStream);
 		encoder.writeObject(verb);
 		encoder.writeObject(ds);
+		encoder.writeObject(i);
 		encoder.close();
 	    String xmlString = memStream.toString();
 		Iterator<ObjectOutputStream> it = outputs.iterator();
@@ -458,7 +463,7 @@ public class Whiteboard extends JFrame{
 	      }
 	}
 	public static void main(String[] args){
-		for(int i=0; i<3;i++){
+		for(int i=0; i<2;i++){
 			Whiteboard whiteboard = new Whiteboard();
 			whiteboard.CreateAndShowGUI();
 		}
