@@ -35,6 +35,5 @@ public class DLine extends DShape{
 	@Override
 	public void setFont(String t) {
 		// TODO Auto-generated method stub
-		
 	}
 }

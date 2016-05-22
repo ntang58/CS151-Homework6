@@ -12,12 +12,12 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
-import javax.swing.JTable;
 
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener{
 	private ArrayList <DShape> shapes = new ArrayList<DShape>();
 	private ArrayList<DShapeModel> shapeModels = new ArrayList<DShapeModel>();
 	private ArrayList<Rectangle> sknobs = new ArrayList<Rectangle>();
+	private ArrayList<Integer> codes = new ArrayList<Integer>();
 	private DShape selected=null;
 	private DShape prevSelected = null;
 	private Color prevColor = null;
@@ -27,6 +27,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private boolean resize=false;
 	private Rectangle anchor, drag;
 	private int movpt =0;
+	private boolean clientMode=false;
 	/**
 	 * Extends JPanel. The layout of the Panel is following a FlowLayout
 	 */
@@ -53,7 +54,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	}
 	public void addShapeModelArray(DShapeModel [] modelArr){
 		for(DShapeModel ds : modelArr){
-			addDShape(ds);
+			addDShape(ds,modelArr.hashCode());
 		}
 		repaintComps(this.getGraphics());
 	}
@@ -203,7 +204,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	 * creates and add a shape based on the DShapeModel passed in
 	 * @param d the DShapeModel to add
 	 */
-	public void addDShape(DShapeModel d){
+	public void addDShape(DShapeModel d,int code){
 		DShape thisD = null;
 		if(d instanceof DOvalModel){
 			thisD = new DOval((DOvalModel)d);//already checked if it is an instance, can type cast
@@ -217,6 +218,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		if(d instanceof DTextModel){
 			thisD = new DText((DTextModel)d);
 		}
+		if(clientMode==true){
+			codes.add(code);
+			System.out.println(codes);
+		}
+		d.addModelListener(new ListenerObject());
 		thisD.setXY(new Point(d.getX(), d.getY()));
 		thisD.setRectangle(new Rectangle(d.getX(), d.getY(), d.getWidth(), d.getHeight()));
 		shapeModels.add(d);
@@ -225,10 +231,20 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		//System.out.println(shapes);
 	}
 	public void remove(DShapeModel ds, Integer i){
-		for(DShapeModel dModel :shapeModels){
-			if(dModel.hashCode()==i){
-				System.out.println(dModel.hashCode());
-				if(shapeModels.remove(dModel)){
+		int deleteIndex = 0;
+		//System.out.println(shapeModels);
+		//System.out.println(codes);
+		for(Integer co : codes){
+			if(co.equals(i)){
+				//System.out.println("True "+co);
+				/*
+				 *if the code of the passed in shape matches the list of codes in this canvas,
+				 *get the shape to remove + the view to remove and remove the model, view and 
+				 *code from list.
+				 */
+				DShapeModel toRemove = shapeModels.get(deleteIndex);
+				DShape toRemoveView = shapes.get(deleteIndex);
+				if(shapeModels.remove(toRemove)&&shapes.remove(toRemoveView)&&codes.remove(i)){
 					System.out.println("removed");
 					break;
 				}
@@ -236,25 +252,17 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 					System.out.println("not removed");
 				}
 			}
+			deleteIndex++;
 		}
 		/*if(shapeModels.remove(i)==false&&shapes.remove(i)==false){
 			System.out.println("cannot remove");
 		}*/
 	}
-	public int getSelectedInt(){
-		int i=-1;
+	public int getSelectedCode(){
 		if(selected!=null){
-			i=0;
-			for(DShape d: shapes){
-				if(d.getSelected()==true){	
-					break;
-				}
-				else{
-					i++;
-				}
-			}
+			return selected.hashCode();
 		}
-		return i;
+		return -1;
 	}
 	public DShapeModel getSelectedModel(){
 		DShapeModel retModel = null;
@@ -331,6 +339,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	      paintComponents(g);
 	      return image;
 	}
+	public void setClientModeOn(){
+		clientMode=true;
+	}
 	/*
 	 * Used online resource : "http://www.java2s.com/Code/Java/Event/MoveShapewithmouse.htm" for moving objects with mouse
 	 */
@@ -398,8 +409,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			repaintComps(this.getGraphics());
 		}
 		else if(selected!=null &&super.isEnabled()){
+			move=false; resize=false;
 			selected.setSelected(false);
 			repaintComps(this.getGraphics());
+			System.out.println("not selected");
 		}
 		if(selected!=null && sknobs.size()==4&&super.isEnabled()){
 			movpt = onSelectKnob(e);
@@ -433,6 +446,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				}
 				anchor = sknobs.get(opPt);
 				drag = sknobs.get(movpt);
+			}
+		}
+	}
+	class ListenerObject implements ModelListener{
+		@Override
+		public void modelChanged(DShapeModel model) {
+			if(clientMode==true){		
+				System.out.println(model);
 			}
 		}
 	}

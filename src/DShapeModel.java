@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * stores a conceptual rectangular bound and color data of a DShape
  */
 public class DShapeModel {
-	private ArrayList<ModelListener>mListeners;
+	private ArrayList<ModelListener>mListeners = new ArrayList<ModelListener>();
 	private int x;
 	private int y;
 	private int height;
@@ -91,6 +91,12 @@ public class DShapeModel {
 	}
 	public void setSelected(boolean selected){
 		this.selected = selected;
+	}
+	public void mimic(DShapeModel d){
+		this.setXY(d.getX(),d.getY());
+		this.setHeight(d.getHeight());
+		this.setWidth(d.getWidth());
+		this.setColor(d.getColor());
 	}
 	//getters----------------------
 	public int getHeight(){

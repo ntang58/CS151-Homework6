@@ -154,7 +154,7 @@ public class Whiteboard extends JFrame{
 				if(server==true){
 					doSend(newRect,"add");
 				}
-				c.addDShape(newRect);
+				c.addDShape(newRect,newRect.hashCode());
 			}
 		});
 		ctrls[0] = rectCreate;
@@ -171,7 +171,7 @@ public class Whiteboard extends JFrame{
 				if(server==true){
 					doSend(newOval,"add");
 				}
-				c.addDShape(newOval);
+				c.addDShape(newOval,newOval.hashCode());
 			}
 			
 		});
@@ -181,7 +181,7 @@ public class Whiteboard extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				DLineModel lM = new DLineModel(100,100,100,200);
-				c.addDShape(lM);
+				c.addDShape(lM,lM.hashCode());
 			}
 		});
 		ctrls[2]= dLine;
@@ -197,7 +197,7 @@ public class Whiteboard extends JFrame{
 				if(server==true){
 					doSend(tM,"add");
 				}
-				c.addDShape(tM);
+				c.addDShape(tM,tM.hashCode());
 			}
 		});
 		ctrls[3] = dText;
@@ -238,7 +238,6 @@ public class Whiteboard extends JFrame{
 		deleteShape.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
 				if(server==true){
-					int remove = c.getSelectedInt();
 					doSend(c.getSelectedModel(),"remove");
 				}
 				c.removeSelected();
@@ -320,6 +319,7 @@ public class Whiteboard extends JFrame{
 					status.setText("Status: "+nwMode);
 					c.clear();
 					c.setEnabled(false);
+					c.setClientModeOn();
 					client=true;
 					doClient();
 			}
@@ -380,9 +380,9 @@ public class Whiteboard extends JFrame{
 	                DShapeModel changeModel = (DShapeModel) decoder.readObject();
 	                changeModel.setSelected(false);
 	                Integer id = (Integer)decoder.readObject();
-	                //System.out.println(verb +" "+ changeModel+" "+id);
+	                System.out.println(verb +" "+ changeModel+" "+id);
 	                if(verb.equals("add")){
-		                c.addDShape(changeModel);
+		                c.addDShape(changeModel, id);
 		                c.paintComponents(c.getGraphics());
 	                }
 	                if(verb.equals("remove")){
@@ -419,7 +419,7 @@ public class Whiteboard extends JFrame{
 		outputs.add(s);
 	}
 	public void doSend(DShapeModel ds, String verb){
-		int i=ds.hashCode();
+		int i=ds.hashCode();//the specific id of a DShapeModel is the hashcode
 		sendRemote(ds,verb, i);
 	}
 	public synchronized void sendRemote(DShapeModel ds, String verb, Integer i){
