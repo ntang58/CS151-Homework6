@@ -12,6 +12,15 @@ public class DTextModel extends DShapeModel {
 		super.setHeight(height);
 		super.setColor(Color.GRAY);
 	}
+	public void mimic(DTextModel mimicing){
+		super.setXY(mimicing.getPoint());
+		super.setColor(mimicing.getColor());
+		super.setWidth(mimicing.getWidth());
+		super.setHeight(mimicing.getHeight());
+		this.text = mimicing.getText();
+		this.f = mimicing.getFont();
+		super.notifyListeners();
+	}
 	public DTextModel(String text, String font){
 		this.text = text;
 		this.f = font;

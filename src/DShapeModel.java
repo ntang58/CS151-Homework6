@@ -36,7 +36,7 @@ public class DShapeModel {
 	/**
 	 * loops through notifier list and notifies each model with modelChanged(this model) whenever this model changes
 	 */
-	private void notifyListeners(){
+	public void notifyListeners(){
 		if(mListeners!=null){
 			for(ModelListener mL:mListeners){
 				 mL.modelChanged(this);
@@ -97,6 +97,7 @@ public class DShapeModel {
 		this.setHeight(d.getHeight());
 		this.setWidth(d.getWidth());
 		this.setColor(d.getColor());
+		notifyListeners();
 	}
 	//getters----------------------
 	public int getHeight(){
@@ -116,6 +117,9 @@ public class DShapeModel {
 	}
 	public boolean getSelected(){
 		return selected;
+	}
+	public Point getPoint(){
+		return new Point(this.x, this.y);
 	}
 	public String toString(){
 		return"X= "+this.x+" Y= "+this.y+" Height= "+this.height+" Width= "+this.width +" "+"Color= "+this.color+" "+ selected;

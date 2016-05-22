@@ -37,7 +37,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-public class Whiteboard extends JFrame{
+public class Whiteboard extends JFrame implements ModelListener{
 	private JFrame whiteBoard;
 	private JPanel westControls;
 	//private Random r = new Random();
@@ -151,9 +151,10 @@ public class Whiteboard extends JFrame{
 				int height = r.nextInt(20);*/
 				DRectModel newRect= new DRectModel();
 				newRect.setBounds(new Rectangle(10,10,20,20));
-				newRect.setColor(Color.RED);
+				//newRect.setColor(Color.RED);
 				if(server==true){
 					doSend(newRect,"add");
+					addSelfListener(newRect);
 				}
 				c.addDShape(newRect,newRect.hashCode());
 			}
@@ -171,6 +172,7 @@ public class Whiteboard extends JFrame{
 				newOval.setBounds(new Rectangle(10,10,20,20));
 				if(server==true){
 					doSend(newOval,"add");
+					addSelfListener(newOval);
 				}
 				c.addDShape(newOval,newOval.hashCode());
 			}
@@ -182,6 +184,10 @@ public class Whiteboard extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				DLineModel lM = new DLineModel(100,100,100,200);
+				if(server==true){
+					doSend(lM,"add");
+					
+				}
 				c.addDShape(lM,lM.hashCode());
 			}
 		});
@@ -197,6 +203,7 @@ public class Whiteboard extends JFrame{
 				tM.setWidth(100);
 				if(server==true){
 					doSend(tM,"add");
+					addSelfListener(tM);
 				}
 				c.addDShape(tM,tM.hashCode());
 			}
@@ -221,6 +228,9 @@ public class Whiteboard extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				if(c.isSelected()){
 					Color chosenClr= clrChoose.getColor();
+					if(server==true){
+						
+					}
 					c.setSelectedColor(chosenClr);
 				}
 			}
@@ -334,6 +344,13 @@ public class Whiteboard extends JFrame{
 		ctrls [14] = clientS;
 		return ctrls;
 	}
+	/**
+	 * adds this whiteboard as a listener to a model
+	 * @param d model to add as listener to 
+	 */
+	public void addSelfListener(DShapeModel d){
+		d.addModelListener(this);
+	}
 	public void save(File f){
 		try{
 			XMLEncoder xmlOut = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(f)));		
@@ -403,6 +420,10 @@ public class Whiteboard extends JFrame{
 	                if(verb.equals("back")){
 	                	c.moveBack(changeModel, id);
 	                	c.paintComponents(c.getGraphics());
+	                }
+	                if(verb.equals("change")){
+	                	c.changeModel(changeModel, id);
+	                	c.repaintComps(c.getGraphics());
 	                }
 				}
 			}
@@ -482,5 +503,11 @@ public class Whiteboard extends JFrame{
 			Whiteboard whiteboard = new Whiteboard();
 			whiteboard.CreateAndShowGUI();
 		}
+	}
+	@Override
+	public void modelChanged(DShapeModel model) {//will only receive model change messages if the whiteboard is a server
+		//if(server==false && client==true){
+		doSend(model, "change");
+		//}
 	}
 }
