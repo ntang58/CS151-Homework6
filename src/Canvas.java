@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-public class Canvas extends JPanel implements MouseListener, MouseMotionListener{
+public class Canvas extends JPanel implements MouseListener, MouseMotionListener, ModelListener{
 	private ArrayList <DShape> shapes = new ArrayList<DShape>();
 	private ArrayList<DShapeModel> shapeModels = new ArrayList<DShapeModel>();
 	private ArrayList<Rectangle> sknobs = new ArrayList<Rectangle>();
@@ -184,7 +184,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			ds.draw(g2, false);
 		}
 	}
-	private void repaintComps(Graphics g){
+	public void repaintComps(Graphics g){
 		Graphics2D g2 = (Graphics2D)g;
 		g2.clearRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
 		g2.setColor(Color.WHITE);
@@ -222,7 +222,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			codes.add(code);
 			//System.out.println(codes);
 		}
-		d.addModelListener(new ListenerObject());
+		d.addModelListener(this);
 		thisD.setXY(new Point(d.getX(), d.getY()));
 		thisD.setRectangle(new Rectangle(d.getX(), d.getY(), d.getWidth(), d.getHeight()));
 		shapeModels.add(d);
@@ -230,7 +230,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		//System.out.println(shapes);
 		//System.out.println(shapes);
 	}
-	
+	//used if client, returns hashcode of selected shape
 	public int getSelectedCode(){
 		if(selected!=null){
 			return selected.hashCode();
@@ -247,6 +247,26 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		}
 		return retModel;
 	}
+	//used if client
+	public void changeModel(DShapeModel cM, Integer i){
+		int changeIndex = 0;
+		for(Integer code:codes){
+			if(code.equals(i)){
+				System.out.println("change");
+				System.out.println(shapeModels.get(changeIndex));
+				if(shapeModels.get(changeIndex) instanceof DTextModel){
+					DTextModel text = (DTextModel) shapeModels.get(changeIndex);
+					text.mimic((DTextModel)cM);
+					shapeModels.set(changeIndex, text);
+				}
+				else{
+					shapeModels.get(changeIndex).mimic(cM);//mimic the passed in model, a mimic will notify its listeners of a change
+				}
+				break;
+			}
+			changeIndex++;
+		}
+	}
 	public void removeSelected(){
 		if(selected!=null){
 			//System.out.println("before: "+shapes);
@@ -258,6 +278,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			//System.out.println("after "+shapes);
 		}
 	}
+	//used if client
 	public void remove(DShapeModel ds, Integer i){
 		int deleteIndex = 0;
 		//System.out.println(shapeModels);
@@ -273,7 +294,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				DShapeModel toRemove = shapeModels.get(deleteIndex);
 				DShape toRemoveView = shapes.get(deleteIndex);
 				if(shapeModels.remove(toRemove)&&shapes.remove(toRemoveView)&&codes.remove(i)){
-					System.out.println("removed");
+					//System.out.println("removed");
 					break;
 				}
 				else{
@@ -282,10 +303,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			}
 			deleteIndex++;
 		}
+		repaintComps(this.getGraphics());
 		/*if(shapeModels.remove(i)==false&&shapes.remove(i)==false){
 			System.out.println("cannot remove");
 		}*/
 	}
+	//used if client
 	public void moveFront(DShapeModel ds, Integer i){
 		//"moves object to back of the list" (graphically, the shape will appear in front of shapes)
 		DShape toShapeBack = null;
@@ -322,6 +345,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			repaintComps(this.getGraphics());
 		}
 	}
+	//used if client
 	public void moveBack(DShapeModel ds, Integer i){
 		//"moves object to the front of the list" (graphically, the shape will appear behind shapes)
 		DShape toShapeFront = null;
@@ -423,7 +447,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				}
 				resizeSelected(arg0,line);
 			}
-			drawSelected(this.getGraphics());
 			repaintComps(this.getGraphics());
 		}
 	}
@@ -505,12 +528,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			}
 		}
 	}
-	class ListenerObject implements ModelListener{
-		@Override
-		public void modelChanged(DShapeModel model) {
-			if(clientMode==true){		
-				System.out.println(model);
-			}
+	@Override
+	public void modelChanged(DShapeModel model) {
+		if(selected!=null){
+			selected.draw(this.getGraphics(), true);
+		}
+		if(clientMode){
+			
 		}
 	}
 }
