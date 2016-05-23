@@ -13,6 +13,7 @@ public class DShapeModel {
 	private int width;
 	private Color color;
 	private boolean selected;
+	private boolean removed;
 	/**
 	 * default constructor. Sets x,y coordinates to 0 and height and width to 0. Color is set to Gray
 	 */
@@ -43,6 +44,11 @@ public class DShapeModel {
 			}
 		}
 	}
+	public void deleted(){
+		removed=true;
+		notifyListeners();
+	}
+	
 	/**
 	 * sets coordinate position of this shape using a Point
 	 * @param p the point to use
@@ -120,6 +126,10 @@ public class DShapeModel {
 	}
 	public Point getPoint(){
 		return new Point(this.x, this.y);
+	}
+	//returns true if the shape is deleted from the canvas. used by listeners that want to know if a model is deleted
+	public boolean getDeleted(){
+		return removed;
 	}
 	public String toString(){
 		return"X= "+this.x+" Y= "+this.y+" Height= "+this.height+" Width= "+this.width +" "+"Color= "+this.color+" "+ selected;

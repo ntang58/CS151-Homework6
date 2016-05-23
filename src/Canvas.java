@@ -271,6 +271,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		if(selected!=null){
 			//System.out.println("before: "+shapes);
 			shapes.remove(selected);
+			selected.getModel().deleted();
 			shapeModels.remove(selected.getModel());
 			selected=null;
 			prevSelected = null;
@@ -439,6 +440,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				else {
 					selected.setXY(new Point((int)arg0.getX()+(int)previousM.getX(),(int)arg0.getY()+(int)previousM.getY()));
 				}
+				repaintComps(this.getGraphics());
 			}
 			if(resize==true&&move==false){
 				boolean line = false;
@@ -446,8 +448,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 					line = true;
 				}
 				resizeSelected(arg0,line);
+				repaintComps(this.getGraphics());
 			}
-			repaintComps(this.getGraphics());
 		}
 	}
 	private void resizeSelected(MouseEvent arg0, boolean line){
@@ -485,7 +487,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		if(super.isEnabled()&&selectShape(e)){
 			move=true;
 			resize=false;
-			repaintComps(this.getGraphics());
+			//repaintComps(this.getGraphics());
 		}
 		else if(selected!=null &&super.isEnabled()){
 			move=false; resize=false;
@@ -538,5 +540,3 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		}
 	}
 }
-	
-

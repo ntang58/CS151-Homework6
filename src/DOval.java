@@ -16,6 +16,7 @@ public class DOval extends DShape{
 
 	public void draw(Graphics g, boolean selected) {
 		super.setSelected(selected);
+		g.setClip(super.getRectangle());
 		g.drawOval(ovalData.getX(), ovalData.getY(), ovalData.getWidth(), ovalData.getHeight());
 		g.setColor(ovalData.getColor());
 		g.fillOval(ovalData.getX(), ovalData.getY(), ovalData.getWidth(), ovalData.getHeight());
