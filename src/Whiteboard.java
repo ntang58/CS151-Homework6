@@ -1,5 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -42,13 +44,16 @@ public class Whiteboard extends JFrame implements ModelListener{
 	private JPanel westControls;
 	//private Random r = new Random();
 	private JFrame colorChooser = new JFrame("Select a Color");
+	private JPanel theTableHolder = new JPanel();
+	private ShapeTable mehTable = new ShapeTable();
+	private JTable theTable = new JTable(mehTable);
 	private Canvas c;
 	private String nwMode = "not connected";
 	private boolean server = false;
 	private boolean client = false;
 	private ClientHandler clientHandler;
 	private ServerAccepter serverAccepter;
-	 private java.util.List<ObjectOutputStream> outputs = new ArrayList<ObjectOutputStream>();//list of "clients" to send to
+	private java.util.List<ObjectOutputStream> outputs = new ArrayList<ObjectOutputStream>();//list of "clients" to send to
 	/**
 	 * @param an array of components to add to the panel
 	 * @return JPanel that represents this whiteboard's controls
@@ -126,12 +131,17 @@ public class Whiteboard extends JFrame implements ModelListener{
 		});
 		southBox.add(thisField);
 		southBox.add(fontBox);
-		
 		JComponent[] ctrls = buttonCtrls();
 		JPanel wBox = boxControls(ctrls);
 		wBox.setAlignmentX(LEFT_ALIGNMENT);
 		wBox.add(southBox);
+		theTable.setEnabled(false);
+		theTable.setVisible(true);
+		theTableHolder.setLayout(new FlowLayout());
+		theTableHolder.add(theTable);
+		theTableHolder.setPreferredSize(new Dimension(100,100));
 		westControls.add(wBox);
+		westControls.add(theTableHolder);
 		whiteBoard.add(westControls, BorderLayout.WEST);
 		whiteBoard.pack();
 		whiteBoard.setVisible(true);
@@ -139,7 +149,7 @@ public class Whiteboard extends JFrame implements ModelListener{
 	/*
 	 * creates all the buttons that the user interacts with
 	 */
-	public JComponent[] buttonCtrls(){
+	private JComponent[] buttonCtrls(){
 		JComponent[] ctrls = new JComponent[15];
 		JButton rectCreate = new JButton("Draw Rectangle");
 		rectCreate.addActionListener(new ActionListener() {
@@ -156,6 +166,8 @@ public class Whiteboard extends JFrame implements ModelListener{
 					doSend(newRect,"add");
 					addSelfListener(newRect);
 				}
+				newRect.addModelListener(mehTable);//registering the table as a listener to the shape, i do this for rectangle, oval, line, and Text
+				mehTable.addShapeModel(newRect);
 				c.addDShape(newRect,newRect.hashCode());
 			}
 		});
@@ -174,6 +186,8 @@ public class Whiteboard extends JFrame implements ModelListener{
 					doSend(newOval,"add");
 					addSelfListener(newOval);
 				}
+				newOval.addModelListener(mehTable);
+				mehTable.addShapeModel(newOval);
 				c.addDShape(newOval,newOval.hashCode());
 			}
 			
@@ -186,8 +200,8 @@ public class Whiteboard extends JFrame implements ModelListener{
 				DLineModel lM = new DLineModel(100,100,100,200);
 				if(server==true){
 					doSend(lM,"add");
-					
 				}
+				lM.addModelListener(mehTable);
 				c.addDShape(lM,lM.hashCode());
 			}
 		});
@@ -205,6 +219,8 @@ public class Whiteboard extends JFrame implements ModelListener{
 					doSend(tM,"add");
 					addSelfListener(tM);
 				}
+				tM.addModelListener(mehTable);
+				mehTable.addShapeModel(tM);
 				c.addDShape(tM,tM.hashCode());
 			}
 		});
@@ -228,9 +244,6 @@ public class Whiteboard extends JFrame implements ModelListener{
 			public void actionPerformed(ActionEvent arg0) {
 				if(c.isSelected()){
 					Color chosenClr= clrChoose.getColor();
-					if(server==true){
-						
-					}
 					c.setSelectedColor(chosenClr);
 				}
 			}
@@ -404,7 +417,7 @@ public class Whiteboard extends JFrame implements ModelListener{
 	                DShapeModel changeModel = (DShapeModel) decoder.readObject();
 	                changeModel.setSelected(false);
 	                Integer id = (Integer)decoder.readObject();
-	                System.out.println(verb +" "+ changeModel+" "+id);
+	                //System.out.println(verb +" "+ changeModel+" "+id);
 	                if(verb.equals("add")){
 		                c.addDShape(changeModel, id);
 		                c.paintComponents(c.getGraphics());
@@ -506,8 +519,6 @@ public class Whiteboard extends JFrame implements ModelListener{
 	}
 	@Override
 	public void modelChanged(DShapeModel model) {//will only receive model change messages if the whiteboard is a server
-		//if(server==false && client==true){
 		doSend(model, "change");
-		//}
 	}
 }
