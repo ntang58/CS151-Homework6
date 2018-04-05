@@ -35,6 +35,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	private Rectangle anchor, drag;
 	private int movpt =0;
 	private boolean clientMode=false;
+	private Point anchorPoint, dragPoint;
+
 	/**
 	 * Extends JPanel. The layout of the Panel is following a FlowLayout
 	 */
@@ -63,7 +65,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		for(DShapeModel ds : modelArr){
 			addDShape(ds,modelArr.hashCode());
 		}
-		repaintComps(this.getGraphics());
+		repaintComps();
 	}
 	/**
 	 * for checking to see if a shape is selected or not on this canvas
@@ -87,7 +89,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		DShape check = isSelectedShape(p);
 		if(check!=null){
 			selected= check;
-			drawSelected(this.getGraphics());
+			drawSelected();
 			previousM= new Point(selected.getX()-e.getX(),selected.getY()-e.getY());
 			return true;
 		}
@@ -119,11 +121,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	/**
 	 * draws knobs around a selected shape
 	 */
-	private void drawSelected(Graphics g){
+	private void drawSelected(){
 		if(selected!=null){
 			if(prevSelected!=null){
 				setSelectedFalse();
-				drawPrev(g);
+				drawPrev();
 			}
 			if(selected!=prevSelected){
 				prevColor = selected.getColor();
@@ -170,7 +172,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	/**
 	 * Used when previously selected component needs to redraw itself
 	 */
-	private void drawPrev(Graphics g){
+	private void drawPrev(){
 		Graphics2D g2 = (Graphics2D)this.getGraphics();
 		prevSelected.setColor(prevColor);
 		prevSelected.draw(g2, false);
@@ -191,8 +193,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			ds.draw(g2, false);
 		}
 	}
-	public void repaintComps(Graphics g){
-		Graphics2D g2 = (Graphics2D)g;
+	public void repaintComps(){
+		Graphics2D g2 = (Graphics2D)this.getGraphics();
 		g2.clearRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
 		g2.setColor(Color.WHITE);
 		g2.fillRect(0, 0, this.getWidth(), this.getHeight());
@@ -200,7 +202,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			DShape ds = shapes.get(i);
 			if(ds.getSelected()==true){
 				//repaint(selected.getX(),selected.getY(),selected.getWidth(), selected.getHeight());
-				drawSelected(g2);
+				drawSelected();
 			}
 			else{
 				ds.draw(g2, false);
@@ -282,7 +284,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			shapeModels.remove(selected.getModel());
 			selected=null;
 			prevSelected = null;
-			repaintComps(this.getGraphics());
+			repaintComps();
 			//System.out.println("after "+shapes);
 		}
 	}
@@ -311,7 +313,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			}
 			deleteIndex++;
 		}
-		repaintComps(this.getGraphics());
+		repaintComps();
 		/*if(shapeModels.remove(i)==false&&shapes.remove(i)==false){
 			System.out.println("cannot remove");
 		}*/
@@ -350,7 +352,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			shapeModels.add(0,tempSelectedModel);
 			shapes.remove(selected);
 			shapes.add(0,selected);
-			repaintComps(this.getGraphics());
+			repaintComps();
 		}
 	}
 	//used if client
@@ -384,14 +386,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		if(selected!=null){
 			shapes.add(selected);
 			shapes.remove(selected);
-			repaintComps(this.getGraphics());
+			repaintComps();
 		}
 	}
 	public void setText(String t){
 		if(selected!=null&&selected instanceof DText){
 			selected = (DText)selected;
 			selected.setText(t);
-			repaintComps(this.getGraphics());
+			repaintComps();
 		}
 	}
 	public String getText(){
@@ -405,7 +407,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		if(selected!=null&&selected instanceof DText){
 			selected = (DText)selected;
 			selected.setFont(t);
-			repaintComps(this.getGraphics());
+			repaintComps();
 		}
 	}
 	public boolean selectedIsTextShape(){
@@ -447,7 +449,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				else {
 					selected.setXY(new Point((int)arg0.getX()+(int)previousM.getX(),(int)arg0.getY()+(int)previousM.getY()));
 				}
-				repaintComps(this.getGraphics());
+				repaintComps();
 			}
 			if(resize==true&&move==false){
 				boolean line = false;
@@ -455,13 +457,18 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 					line = true;
 				}
 				resizeSelected(arg0,line);
-				repaintComps(this.getGraphics());
+				repaintComps();
 			}
 		}
 	}
 	private void resizeSelected(MouseEvent arg0, boolean line){
 		if(line){
-			
+			dragPoint.setLocation(arg0.getX(), arg0.getY());
+			Rectangle ancRect = new Rectangle(anchorPoint);
+			ancRect.add(dragPoint);
+			selected.setRectangle(ancRect);
+			((DLine)selected).moveP1((int)dragPoint.getX(),(int)dragPoint.getY());
+			((DLine)selected).moveP2((int)anchorPoint.getX(),(int)dragPoint.getY());
 		}
 		else{
 			drag.setLocation(arg0.getX(), arg0.getY());
@@ -499,7 +506,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		else if(selected!=null &&super.isEnabled()){
 			move=false; resize=false;
 			selected.setSelected(false);
-			repaintComps(this.getGraphics());
+			repaintComps();
 			//System.out.println("not selected");
 		}
 		if(selected!=null && sknobs.size()==4&&super.isEnabled()){

@@ -443,7 +443,7 @@ public class Whiteboard extends JFrame implements ModelListener{
 	                }
 	                if(verb.equals("change")){
 	                	c.changeModel(changeModel, id);
-	                	c.repaintComps(c.getGraphics());
+	                	c.repaintComps();
 	                }
 				}
 			}
