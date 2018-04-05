@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Shape;
 
+import models.DTextModel;
+
 public class DText extends DShape{
 	private DTextModel textData =new DTextModel();
 	public DText(){

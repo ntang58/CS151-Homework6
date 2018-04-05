@@ -1,5 +1,7 @@
 import java.awt.Graphics;
 
+import models.DOvalModel;
+
 public class DOval extends DShape{
 	private DOvalModel ovalData = new DOvalModel();
 	public DOval(){

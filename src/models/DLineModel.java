@@ -1,3 +1,4 @@
+package models;
 import java.awt.Point;
 import java.awt.Rectangle;
 public class DLineModel extends DShapeModel {

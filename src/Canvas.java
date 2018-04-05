@@ -13,6 +13,13 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import models.DLineModel;
+import models.DOvalModel;
+import models.DRectModel;
+import models.DShapeModel;
+import models.DTextModel;
+import models.ModelListener;
+
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener, ModelListener{
 	private ArrayList <DShape> shapes = new ArrayList<DShape>();
 	private ArrayList<DShapeModel> shapeModels = new ArrayList<DShapeModel>();

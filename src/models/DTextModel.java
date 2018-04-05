@@ -1,3 +1,4 @@
+package models;
 import java.awt.Color;
 public class DTextModel extends DShapeModel {
 	private String text;

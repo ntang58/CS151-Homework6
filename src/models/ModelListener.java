@@ -1,3 +1,4 @@
+package models;
 /**
  * "Any object that wants to hear about changes in a shape model should implement ModelListener"
  */

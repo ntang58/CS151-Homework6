@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+
+import models.DShapeModel;
 public abstract class DShape{
 	private DShapeModel theModel = null;
 	protected void attachModel(DShapeModel ds){

@@ -1,6 +1,8 @@
 import java.awt.Graphics;
 import java.awt.Point;
 
+import models.DLineModel;
+
 public class DLine extends DShape{
 	private DLineModel lineData =new DLineModel();
 	public DLine(DLineModel pointD){

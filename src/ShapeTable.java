@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 
 import javax.swing.table.*;
+
+import models.DShapeModel;
+import models.ModelListener;
 public class ShapeTable extends AbstractTableModel implements ModelListener{
 	private String []  colNames = {"X", "Y","Width", "Height"};
 	ArrayList<Integer> xData = new ArrayList<Integer>();

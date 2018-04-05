@@ -39,6 +39,13 @@ import javax.swing.JColorChooser;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import models.DLineModel;
+import models.DOvalModel;
+import models.DRectModel;
+import models.DShapeModel;
+import models.DTextModel;
+import models.ModelListener;
+
 public class Whiteboard extends JFrame implements ModelListener{
 	private JFrame whiteBoard;
 	private JPanel westControls;

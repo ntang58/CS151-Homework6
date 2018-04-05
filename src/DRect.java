@@ -1,4 +1,6 @@
 import java.awt.Graphics;
+
+import models.DRectModel;
 public class DRect extends DShape{
 	private DRectModel rectData = new DRectModel();
 	public DRect(){
